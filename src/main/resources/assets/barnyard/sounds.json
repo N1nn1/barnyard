@@ -1,0 +1,46 @@
+{
+  "block.thatch.break": {
+    "sounds": [
+      "barnyard:block/thatch/heavy1",
+      "barnyard:block/thatch/heavy2",
+      "barnyard:block/thatch/heavy3",
+      "barnyard:block/thatch/heavy4"
+    ],
+    "subtitle": "subtitles.block.generic.break"
+  },
+  "block.thatch.fall": {
+    "sounds": [
+      {
+        "name": "barnyard:block.thatch.break",
+        "type": "event"
+      }
+    ]
+  },
+  "block.thatch.hit": {
+    "sounds": [
+      {
+        "name": "barnyard:block.thatch.step",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.block.generic.hit"
+  },
+  "block.thatch.place": {
+    "sounds": [
+      {
+        "name": "barnyard:block.thatch.break",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.block.generic.place"
+  },
+  "block.thatch.step": {
+    "sounds": [
+      "barnyard:block/thatch/light1",
+      "barnyard:block/thatch/light2",
+      "barnyard:block/thatch/light3",
+      "barnyard:block/thatch/light4"
+    ],
+    "subtitle": "subtitles.block.generic.footsteps"
+  }
+}
