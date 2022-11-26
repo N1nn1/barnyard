@@ -1,4 +1,7 @@
 {
   "mod.barnyard.name": "Barnyard",
-  "mod.barnyard.contact.discord": "Discord"
+  "mod.barnyard.contact.discord": "Discord",
+
+  "block.barnyard.thatch_block": "Thatch Block",
+  "block.barnyard.thatch": "Thatch"
 }

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "barnyard:thatch_block"
+    }
+  ],
+  "result": {
+    "item": "minecraft:wheat",
+    "count": 4
+  }
+}

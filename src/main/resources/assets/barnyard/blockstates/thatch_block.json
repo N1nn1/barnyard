@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "barnyard:block/thatch_block"
+      },
+      {
+        "model": "barnyard:block/thatch_block",
+        "y": 90
+      },
+      {
+        "model": "barnyard:block/thatch_block",
+        "y": 180
+      },
+      {
+        "model": "barnyard:block/thatch_block",
+        "y": 270
+      }
+    ]
+  }
+}
