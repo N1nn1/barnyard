@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+
+  "id": "barnyard",
+  "version": "${version}",
+
+  "name": "Barnyard",
+  "icon": "assets/barnyard/icon.png",
+  "description": "A Minecraft mod that plans on revamping farm animals.",
+
+  "license": [
+    "All Rights Reserved"
+  ],
+  "authors": [
+    "Ninni"
+  ],
+
+  "contact": {
+    "sources": "https://github.com/N1nn1/barnyard",
+    "issues": "https://github.com/N1nn1/barnyard/issues"
+  },
+  "custom": {
+    "modmenu": { "links": { "mod.barnyard.contact.discord": "https://discord.gg/fT4MKzUTZS" } }
+  },
+
+  "environment": "*",
+  "entrypoints": {
+    "main":     [
+      "com.ninni.barnyard.Barnyard"
+    ],
+    "client":   [
+      "com.ninni.barnyard.BarnyardClient"
+    ]
+  },
+  "mixins": [ "barnyard.mixins.json" ],
+
+  "depends": {
+    "fabricloader": ">=0.14.10",
+    "fabric-api": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
