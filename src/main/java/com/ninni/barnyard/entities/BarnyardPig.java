@@ -25,6 +25,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -185,6 +187,12 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     public boolean isFood(ItemStack itemStack) {
         return itemStack.is(BarnyardTags.PIG_BREEDS);
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance mobEffectInstance) {
+        if (mobEffectInstance.getEffect() == MobEffects.POISON) return false;
+        return super.canBeAffected(mobEffectInstance);
     }
 
     @Override

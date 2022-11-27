@@ -8,16 +8,16 @@ import net.minecraft.world.level.block.SoundType;
 
 public interface BarnyardSounds {
 
-    public static final SoundEvent PIG_AMBIENT = register("enity.pig.ambient");
-    public static final SoundEvent PIG_DASH = register("entity.pig.dash");
-    public static final SoundEvent PIG_DASH_RECHARGE = register("entity.pig.dash.recharge");
-    public static final SoundEvent PIG_DASH_RAM = register("entity.pig.dash.ram");
-    public static final SoundEvent PIG_DEATH = register("entity.pig.death");
-    public static final SoundEvent PIG_HURT = register("entity.pig.hurt");
-    public static final SoundEvent PIG_STEP = register("entity.pig.step");
-    public static final SoundEvent PIG_SNIFF = register("entity.pig.sniff");
-    public static final SoundEvent PIG_SADDLE_EQUIP = register("entity.pig.saddle_equip");
-    public static final SoundEvent PIG_SADDLE_UNEQUIP = register("entity.pig.saddle_unequip");
+    SoundEvent PIG_AMBIENT = register("entity.pig.ambient");
+    SoundEvent PIG_DASH = register("entity.pig.dash");
+    SoundEvent PIG_DASH_RECHARGE = register("entity.pig.dash.recharge");
+    SoundEvent PIG_DASH_RAM = register("entity.pig.dash.ram");
+    SoundEvent PIG_DEATH = register("entity.pig.death");
+    SoundEvent PIG_HURT = register("entity.pig.hurt");
+    SoundEvent PIG_STEP = register("entity.pig.step");
+    SoundEvent PIG_SNIFF = register("entity.pig.sniff");
+    SoundEvent PIG_SADDLE_EQUIP = register("entity.pig.saddle_equip");
+    SoundEvent PIG_SADDLE_UNEQUIP = register("entity.pig.saddle_unequip");
 
     SoundType THATCH = register("thatch", 2F, 0.75F);
 
