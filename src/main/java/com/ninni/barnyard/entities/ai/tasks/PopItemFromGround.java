@@ -31,9 +31,7 @@ public class PopItemFromGround extends Behavior<BarnyardPig> {
 
     @Override
     protected void stop(ServerLevel serverLevel, BarnyardPig pig, long l) {
-        if (pig.hasPose(Pose.SNIFFING)) {
-            pig.setPose(Pose.STANDING);
-        }
+        if (pig.hasPose(Pose.SNIFFING)) pig.setPose(Pose.STANDING);
         pig.spawnAtLocation(new ItemStack(Items.DIAMOND));
         pig.getBrain().eraseMemory(MemoryModuleType.IS_SNIFFING);
         pig.getBrain().setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, 6000L);

@@ -68,18 +68,18 @@ public class BarnyardPigAi {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new Swim(0.8f),
                 new CalmDown(),
-                new EraseMemoryIf<BarnyardPig>((mob) -> mob.getBrain().hasMemoryValue(MemoryModuleType.IS_PANICKING), MemoryModuleType.IS_SNIFFING),
-                new RunIf<BarnyardPig>((mob) -> !mob.hasTusk(), SetWalkTargetAwayFrom.entity(MemoryModuleType.HURT_BY_ENTITY, FAST_SPEED, 20, true)),
+                new EraseMemoryIf<>((mob) -> mob.getBrain().hasMemoryValue(MemoryModuleType.IS_PANICKING), MemoryModuleType.IS_SNIFFING),
+                new RunIf<>((mob) -> !mob.hasTusk(), SetWalkTargetAwayFrom.entity(MemoryModuleType.HURT_BY_ENTITY, FAST_SPEED, 20, true)),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
-                new StopBeingAngryIfTargetDead<BarnyardPig>(),
+                new StopBeingAngryIfTargetDead<>(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)
         ));
     }
 
     private static void initIdleActivity(Brain<BarnyardPig> brain) {
         brain.addActivityWithConditions(Activity.IDLE, ImmutableList.of(
-                Pair.of(0, new StartAttacking<BarnyardPig>(BarnyardPigAi::getAttackTarget)),
+                Pair.of(0, new StartAttacking<>(BarnyardPigAi::getAttackTarget)),
                 Pair.of(1, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6.0f), UniformInt.of(30, 60))),
                 Pair.of(2, new AnimalMakeLove(BarnyardEntityTypes.PIG, 1.0f)),
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
@@ -98,7 +98,7 @@ public class BarnyardPigAi {
         brain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10, ImmutableList.of(
             new SetWalkTargetFromAttackTargetIfTargetOutOfReach(FAST_SPEED),
             new MeleeAttack(25),
-            new StopAttackingIfTargetInvalid<BarnyardPig>()
+            new StopAttackingIfTargetInvalid<>()
         ), MemoryModuleType.ATTACK_TARGET);
     }
 

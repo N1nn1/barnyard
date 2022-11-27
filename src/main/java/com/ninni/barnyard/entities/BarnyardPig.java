@@ -1,5 +1,6 @@
 package com.ninni.barnyard.entities;
 
+import net.minecraft.world.entity.*;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -27,16 +28,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ItemBasedSteering;
-import net.minecraft.world.entity.ItemSteerable;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.Saddleable;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -89,6 +80,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
     private final ItemBasedSteering steering;
+    public final AnimationState sniffingAnimationState = new AnimationState();
+    public final AnimationState rollingInMudAnimationState = new AnimationState();
 
     public BarnyardPig(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -199,6 +192,19 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor) {
         if (DATA_BOOST_TIME.equals(entityDataAccessor) && this.level.isClientSide) {
             this.steering.onSynced();
+        }
+
+        if (DATA_POSE.equals(entityDataAccessor)) {
+            if (this.getPose() == Pose.SNIFFING) {
+                this.sniffingAnimationState.start(this.tickCount);
+            } else {
+                this.sniffingAnimationState.stop();
+            }
+            if (this.getPose() == Pose.DIGGING) {
+                this.rollingInMudAnimationState.start(this.tickCount);
+            } else {
+                this.rollingInMudAnimationState.stop();
+            }
         }
         super.onSyncedDataUpdated(entityDataAccessor);
     }

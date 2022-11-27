@@ -26,12 +26,12 @@ public class GroundSniffing extends Behavior<BarnyardPig> {
     }
 
     @Override
-    protected void start(ServerLevel serverLevel, BarnyardPig warden, long l) {
-        Brain<BarnyardPig> brain = warden.getBrain();
+    protected void start(ServerLevel serverLevel, BarnyardPig pig, long l) {
+        Brain<BarnyardPig> brain = pig.getBrain();
         brain.setMemory(MemoryModuleType.IS_SNIFFING, Unit.INSTANCE);
         brain.setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, SNIFF_COOLDOWN.sample(serverLevel.getRandom()));
         brain.eraseMemory(MemoryModuleType.WALK_TARGET);
-        warden.setPose(Pose.SNIFFING);
+        pig.setPose(Pose.SNIFFING);
     }
 
 }

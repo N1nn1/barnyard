@@ -1,9 +1,11 @@
 {
   "values": [
     "minecraft:carrot",
+    "minecraft:golden_carrot",
     "minecraft:potato",
-    "minecraft:melon",
+    "minecraft:melon_slice",
     "minecraft:apple",
+    "minecraft:golden_apple",
     "minecraft:beetroot",
     "minecraft:red_mushroom",
     "minecraft:brown_mushroom",
