@@ -1,13 +1,19 @@
 package com.ninni.barnyard;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.reflect.Reflection;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardItems;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +23,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class Barnyard implements ModInitializer {
+
 	public static final String MOD_ID = "barnyard";
+	public static final Logger LOGGER = LogManager.getLogger();
+
+	public static ResourceLocation id(String name) {
+		return new ResourceLocation(MOD_ID, name);
+	}
 
 	@Override
 	@SuppressWarnings("UnstableApiUsage")

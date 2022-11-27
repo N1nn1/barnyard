@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
+import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
@@ -74,7 +75,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             MemoryModuleType.IS_TEMPTED,
             MemoryModuleType.IS_PANICKING,
             MemoryModuleType.IS_SNIFFING,
-            MemoryModuleType.SNIFF_COOLDOWN
+            MemoryModuleType.SNIFF_COOLDOWN,
+            BarnyardMemoryModules.PIG_SNIFFING_TICKS
     );
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);

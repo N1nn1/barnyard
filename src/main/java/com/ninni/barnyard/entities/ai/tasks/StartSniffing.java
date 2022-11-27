@@ -2,36 +2,38 @@ package com.ninni.barnyard.entities.ai.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.entities.ai.BarnyardPigAi;
+import com.ninni.barnyard.init.BarnyardMemoryModules;
+import com.ninni.barnyard.init.BarnyardSounds;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Unit;
-import net.minecraft.util.valueproviders.IntProvider;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 
-public class GroundSniffing extends Behavior<BarnyardPig> {
-    private static final IntProvider SNIFF_COOLDOWN = UniformInt.of(100, 200);
-
-    public GroundSniffing() {
+public class StartSniffing extends Behavior<BarnyardPig> {
+    public StartSniffing() {
         super(ImmutableMap.of(MemoryModuleType.SNIFF_COOLDOWN, MemoryStatus.VALUE_ABSENT));
     }
 
     @Override
-    protected boolean checkExtraStartConditions(ServerLevel serverLevel, BarnyardPig livingEntity) {
-        return livingEntity.getBlockStateOn().is(BlockTags.DIRT) && super.checkExtraStartConditions(serverLevel, livingEntity);
+    protected boolean checkExtraStartConditions(ServerLevel level, BarnyardPig pig) {
+        return pig.getBlockStateOn().is(BlockTags.DIRT) && super.checkExtraStartConditions(level, pig);
     }
 
     @Override
-    protected void start(ServerLevel serverLevel, BarnyardPig pig, long l) {
+    protected void start(ServerLevel level, BarnyardPig pig, long l) {
         Brain<BarnyardPig> brain = pig.getBrain();
+        
         brain.setMemory(MemoryModuleType.IS_SNIFFING, Unit.INSTANCE);
-        brain.setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, SNIFF_COOLDOWN.sample(serverLevel.getRandom()));
+        brain.setMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS, BarnyardPigAi.SNIFFING_DURATION);
         brain.eraseMemory(MemoryModuleType.WALK_TARGET);
-        pig.setPose(Pose.SNIFFING);
-    }
 
+        pig.setPose(Pose.SNIFFING);
+        pig.playSound(BarnyardSounds.PIG_SNIFF, 1, 1);
+    }
 }

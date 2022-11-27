@@ -8,9 +8,10 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
-import com.ninni.barnyard.entities.ai.tasks.GroundSniffing;
-import com.ninni.barnyard.entities.ai.tasks.PopItemFromGround;
+import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
+import com.ninni.barnyard.entities.ai.tasks.TickSniffing;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
+import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardTags;
 
 import net.minecraft.util.valueproviders.UniformInt;
@@ -47,6 +48,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public class BarnyardPigAi {
 
+    public static final int SNIFFING_DURATION = 120;
+
     protected static final float FAST_SPEED = 1.5F;
 
     public static Brain<?> makeBrain(Brain<BarnyardPig> brain) {
@@ -61,7 +64,7 @@ public class BarnyardPigAi {
     }
 
     private static void initSniffingActivity(Brain<BarnyardPig> brain) {
-        brain.addActivityAndRemoveMemoryWhenStopped(Activity.SNIFF, 5, ImmutableList.of(new PopItemFromGround(100)), MemoryModuleType.IS_SNIFFING);
+        brain.addActivityAndRemoveMemoryWhenStopped(Activity.SNIFF, 5, ImmutableList.of(new TickSniffing(SNIFFING_DURATION)), MemoryModuleType.IS_SNIFFING);
     }
 
     private static void initCoreActivity(Brain<BarnyardPig> brain) {
@@ -73,22 +76,23 @@ public class BarnyardPigAi {
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new StopBeingAngryIfTargetDead<>(),
-                new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)
+                new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
+                new CountDownCooldownTicks(BarnyardMemoryModules.PIG_SNIFFING_TICKS)
         ));
     }
 
     private static void initIdleActivity(Brain<BarnyardPig> brain) {
         brain.addActivityWithConditions(Activity.IDLE, ImmutableList.of(
-                Pair.of(0, new StartAttacking<>(BarnyardPigAi::getAttackTarget)),
-                Pair.of(1, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6.0f), UniformInt.of(30, 60))),
-                Pair.of(2, new AnimalMakeLove(BarnyardEntityTypes.PIG, 1.0f)),
+                Pair.of(0, new RunIf<>((mob) -> !mob.isSaddled(), new StartAttacking<>(BarnyardPigAi::getAttackTarget))),
+                Pair.of(1, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6), UniformInt.of(30, 60))),
+                Pair.of(2, new AnimalMakeLove(BarnyardEntityTypes.PIG, 1)),
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
-                Pair.of(5, new GroundSniffing()),
+                Pair.of(5, new RunIf<>((mob) -> !mob.isBaby(), new StartSniffing())),
                 Pair.of(6, new RunOne<>(ImmutableMap.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT),
                         ImmutableList.of(
-                                Pair.of(new RandomStroll(1.0f), 2),
-                                Pair.of(new SetWalkTargetFromLookTarget(1.0f, 3), 2),
+                                Pair.of(new RandomStroll(1), 2),
+                                Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
                                 Pair.of(new DoNothing(30, 60), 1)
                         )))),
                 ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT)));
