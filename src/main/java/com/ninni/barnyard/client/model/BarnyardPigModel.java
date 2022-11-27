@@ -25,7 +25,7 @@ import static net.minecraft.client.model.geom.PartNames.TAIL;
 
 @SuppressWarnings("FieldCanBeLocal, unused")
 @Environment(EnvType.CLIENT)
-public class PigModel extends HierarchicalModel<BarnyardPig> {
+public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
     private final ModelPart root;
 
     private final ModelPart body;
@@ -38,7 +38,7 @@ public class PigModel extends HierarchicalModel<BarnyardPig> {
     private final ModelPart leftEar;
     private final ModelPart rightEar;
 
-    public PigModel(ModelPart root) {
+    public BarnyardPigModel(ModelPart root) {
         this.root = root;
         
         this.body = root.getChild(BODY);
