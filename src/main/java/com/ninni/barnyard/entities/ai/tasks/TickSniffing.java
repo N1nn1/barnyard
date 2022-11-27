@@ -6,7 +6,10 @@ import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.init.BarnyardItems;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.behavior.Behavior;
@@ -31,8 +34,11 @@ public class TickSniffing extends Behavior<BarnyardPig> {
         var memory = pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS);
         if (memory.isPresent()) {
             int time = memory.get();
+            Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
+            if (time > 40 && time < 64) {
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, pig.getBlockStateOn()), pig.getX() + look.x(), pig.getY() + 0.1, pig.getZ() + look.z(), 1, 0.2, 0.1, 0.2, 0);
+            }
             if (time == 38) {
-                Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
                 ItemEntity item = new ItemEntity(level, pig.getX() + look.x(), pig.getY() + 0.2, pig.getZ() + look.z(), BarnyardItems.TRUFFLE.getDefaultInstance());
                 item.setDefaultPickUpDelay();
                 item.setDeltaMovement(look.multiply(0.3, 0, 0.3).add(0, 0.15, 0));

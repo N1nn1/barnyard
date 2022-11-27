@@ -136,11 +136,14 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     private void damageRamTarget(LivingEntity mob) {
-        Vec3 vec33 = mob.position().subtract(this.position().add(0.0, 1.6, 0.0)).normalize();
-        double d = 0.25 * (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-        double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-        mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
-        mob.hurt(DamageSource.mobAttack(this).setNoAggro(), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        if (getControllingPassenger() != null && getControllingPassenger() instanceof LivingEntity passenger) {
+            Vec3 vec33 = mob.position().subtract(this.position().add(0.0, 1.6, 0.0)).normalize();
+            double d = 0.25 * (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
+            DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
+            mob.hurt(source, (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        }
     }
     
     public void setAngerTarget(LivingEntity mob) {
