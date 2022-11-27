@@ -112,7 +112,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         if (steering.boosting && steering.boostTime++ > 2) steering.boosting = false;
 
 
-        if (steering.boostTime <= 3) {
+        if (steering.boosting && steering.boostTime <= 3) {
             this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D), this::isValidTarget).forEach(this::damageRamTarget);
         }
         if (this.isControlledByLocalInstance()) {
