@@ -1,20 +1,31 @@
 package com.ninni.barnyard.client.model;
 
-import com.ninni.barnyard.entity.Pig;
+import com.ninni.barnyard.entities.BarnyardPig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import static net.minecraft.client.model.geom.PartNames.*;
+import static net.minecraft.client.model.geom.PartNames.BODY;
+import static net.minecraft.client.model.geom.PartNames.LEFT_ARM;
+import static net.minecraft.client.model.geom.PartNames.LEFT_EAR;
+import static net.minecraft.client.model.geom.PartNames.LEFT_LEG;
+import static net.minecraft.client.model.geom.PartNames.NOSE;
+import static net.minecraft.client.model.geom.PartNames.RIGHT_ARM;
+import static net.minecraft.client.model.geom.PartNames.RIGHT_EAR;
+import static net.minecraft.client.model.geom.PartNames.RIGHT_LEG;
+import static net.minecraft.client.model.geom.PartNames.TAIL;
 
 @SuppressWarnings("FieldCanBeLocal, unused")
 @Environment(EnvType.CLIENT)
-public class PigModel extends HierarchicalModel<Pig> {
+public class PigModel extends HierarchicalModel<BarnyardPig> {
     private final ModelPart root;
 
     private final ModelPart body;
@@ -134,7 +145,7 @@ public class PigModel extends HierarchicalModel<Pig> {
     }
 
     @Override
-    public void setupAnim(Pig entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+    public void setupAnim(BarnyardPig entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         float pi = (float) Math.PI;
         float speed = 1.5f;
         float degree = 1.0f;

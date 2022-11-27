@@ -3,6 +3,7 @@ package com.ninni.barnyard.client.render;
 import com.ninni.barnyard.Barnyard;
 import com.ninni.barnyard.client.model.BarnyardModelLayers;
 import com.ninni.barnyard.client.model.PigModel;
+import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entity.Pig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value= EnvType.CLIENT)
-public class PigRenderer extends MobRenderer<Pig, PigModel> {
+public class PigRenderer extends MobRenderer<BarnyardPig, PigModel> {
     private static final ResourceLocation PIG_LOCATION = new ResourceLocation(Barnyard.MOD_ID, "textures/entity/pig/pig.png");
     private static final ResourceLocation TUSKED_PIG_LOCATION = new ResourceLocation(Barnyard.MOD_ID, "textures/entity/pig/tusked_pig.png");
 
@@ -21,7 +22,7 @@ public class PigRenderer extends MobRenderer<Pig, PigModel> {
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(Pig entity) {
+    public @NotNull ResourceLocation getTextureLocation(BarnyardPig entity) {
         return PIG_LOCATION;
     }
 }
