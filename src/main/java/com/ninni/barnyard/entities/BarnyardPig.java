@@ -1,11 +1,15 @@
 package com.ninni.barnyard.entities;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
+import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
+
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -14,7 +18,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
@@ -45,12 +49,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     protected static final ImmutableList<SensorType<? extends Sensor<? super BarnyardPig>>> SENSOR_TYPES = ImmutableList.of(
             SensorType.NEAREST_LIVING_ENTITIES,
-            SensorType.NEAREST_PLAYERS, SensorType.NEAREST_ITEMS,
+            SensorType.NEAREST_PLAYERS,
+            SensorType.NEAREST_ITEMS,
             SensorType.NEAREST_ADULT,
             SensorType.HURT_BY,
             BarnyardSensorTypes.PIG_TEMPTATIONS
@@ -61,8 +65,16 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             MemoryModuleType.WALK_TARGET,
             MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
             MemoryModuleType.PATH,
+            MemoryModuleType.ATTACK_TARGET,
+            MemoryModuleType.ATTACK_COOLING_DOWN,
+            MemoryModuleType.ANGRY_AT,
+            MemoryModuleType.NEAREST_ATTACKABLE,
             MemoryModuleType.ATE_RECENTLY,
             MemoryModuleType.BREED_TARGET,
+            MemoryModuleType.NEAREST_LIVING_ENTITIES,
+            MemoryModuleType.NEAREST_VISIBLE_PLAYER,
+            MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
+            MemoryModuleType.HURT_BY_ENTITY,
             MemoryModuleType.TEMPTING_PLAYER,
             MemoryModuleType.NEAREST_VISIBLE_ADULT,
             MemoryModuleType.TEMPTATION_COOLDOWN_TICKS,
@@ -122,42 +134,50 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         this.tryCheckInsideBlocks();
     }
 
-    private boolean isValidTarget(LivingEntity livingEntity) {
-        return livingEntity.isAlive() && !livingEntity.is(this) && !livingEntity.is(this.getControllingPassenger());
+    private boolean isValidTarget(LivingEntity mob) {
+        return mob.isAlive() && !mob.is(this) && !mob.is(this.getControllingPassenger());
     }
 
-    private void damageRamTarget(LivingEntity livingEntity) {
-        Vec3 vec33 = livingEntity.position().subtract(this.position().add(0.0, 1.6, 0.0)).normalize();
-        double d = 0.25 * (1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-        double e = (1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-        livingEntity.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
-        livingEntity.hurt(DamageSource.mobAttack(this).setNoAggro(), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+    private void damageRamTarget(LivingEntity mob) {
+        Vec3 vec33 = mob.position().subtract(this.position().add(0.0, 1.6, 0.0)).normalize();
+        double d = 0.25 * (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+        double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+        mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
+        mob.hurt(DamageSource.mobAttack(this).setNoAggro(), (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+    }
+    
+    public void setAngerTarget(LivingEntity mob) {
+        if (!Sensor.isEntityAttackableIgnoringLineOfSight(this, mob)) return;
+        getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+        getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, mob.getUUID(), 600L);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getDirectEntity() != null && source.getDirectEntity() instanceof LivingEntity mob) setAngerTarget(mob);
+        return super.hurt(source, amount);
     }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        boolean bl = this.isFood(stack) || stack.is(ConventionalItemTags.SHEARS);
         InteractionResult interactionResult = super.mobInteract(player, hand);
 
-        if (this.isSaddled() && stack.is(ConventionalItemTags.SHEARS)) {
-            this.steering.setSaddle(false);
-            if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
-            this.spawnAtLocation(Items.SADDLE);
-            //TODO custom sound
-            return InteractionResult.sidedSuccess(this.level.isClientSide);
-        }
+        if (isSaddled()) {
+            if (stack.is(ConventionalItemTags.SHEARS)) {
+                steering.setSaddle(false);
+                if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                spawnAtLocation(Items.SADDLE);
+                playSound(BarnyardSounds.PIG_SADDLE_UNEQUIP, 1, 1);
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            } else if (isFood(stack)) {
 
-        if (!bl && this.isSaddled() && !this.isVehicle() && !player.isSecondaryUseActive()) {
-            if (!this.level.isClientSide) player.startRiding(this);
-            return InteractionResult.sidedSuccess(this.level.isClientSide);
-        }
-
-        if (!interactionResult.consumesAction()) {
-            if (stack.is(Items.SADDLE)) {
-                return stack.interactLivingEntity(player, this, hand);
+            } else if (!isVehicle() && !player.isSecondaryUseActive()) {
+                if (!level.isClientSide) player.startRiding(this);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            return InteractionResult.PASS;
+        } else {
+            if (stack.is(Items.SADDLE)) return stack.interactLivingEntity(player, this, hand);
         }
 
         return interactionResult;
@@ -229,7 +249,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0)
+                .add(Attributes.MAX_HEALTH, 20.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5f)
                 .add(Attributes.ATTACK_DAMAGE, 4.0);
@@ -246,6 +266,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Brain<BarnyardPig> getBrain() {
         return (Brain<BarnyardPig>) super.getBrain();
     }
@@ -273,8 +294,23 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         return BarnyardEntityTypes.PIG.create(serverLevel);
     }
 
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return BarnyardSounds.PIG_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return BarnyardSounds.PIG_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return BarnyardSounds.PIG_DEATH;
+    }
+
     protected void playStepSound(BlockPos blockPos, BlockState blockState) {
-        this.playSound(SoundEvents.PIG_STEP, 0.15F, 1.0F);
+        this.playSound(BarnyardSounds.PIG_STEP, 0.15F, 1.0F);
     }
 
     protected void dropEquipment() {
@@ -303,7 +339,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     public void equipSaddle(@Nullable SoundSource soundSource) {
         this.steering.setSaddle(true);
         if (soundSource != null) {
-            this.level.playSound(null, this, SoundEvents.PIG_SADDLE, soundSource, 0.5f, 1.0f);
+            this.level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1.0f);
         }
     }
 

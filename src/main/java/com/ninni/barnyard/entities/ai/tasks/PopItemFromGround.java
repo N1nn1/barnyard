@@ -2,8 +2,9 @@ package com.ninni.barnyard.entities.ai.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.init.BarnyardSounds;
+
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.behavior.Behavior;
@@ -25,7 +26,7 @@ public class PopItemFromGround extends Behavior<BarnyardPig> {
 
     @Override
     protected void start(ServerLevel serverLevel, BarnyardPig pig, long l) {
-        pig.playSound(SoundEvents.WARDEN_SNIFF, 5.0f, 1.0f);
+        pig.playSound(BarnyardSounds.PIG_SNIFF, 1, 1.0f);
     }
 
     @Override

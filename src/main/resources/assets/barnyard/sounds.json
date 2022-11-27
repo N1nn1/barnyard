@@ -1,46 +1,147 @@
 {
-  "block.thatch.break": {
-    "sounds": [
-      "barnyard:block/thatch/heavy1",
-      "barnyard:block/thatch/heavy2",
-      "barnyard:block/thatch/heavy3",
-      "barnyard:block/thatch/heavy4"
-    ],
-    "subtitle": "subtitles.block.generic.break"
-  },
-  "block.thatch.fall": {
-    "sounds": [
-      {
-        "name": "barnyard:block.thatch.break",
-        "type": "event"
-      }
-    ]
-  },
-  "block.thatch.hit": {
-    "sounds": [
-      {
-        "name": "barnyard:block.thatch.step",
-        "type": "event"
-      }
-    ],
-    "subtitle": "subtitles.block.generic.hit"
-  },
-  "block.thatch.place": {
-    "sounds": [
-      {
-        "name": "barnyard:block.thatch.break",
-        "type": "event"
-      }
-    ],
-    "subtitle": "subtitles.block.generic.place"
-  },
-  "block.thatch.step": {
-    "sounds": [
-      "barnyard:block/thatch/light1",
-      "barnyard:block/thatch/light2",
-      "barnyard:block/thatch/light3",
-      "barnyard:block/thatch/light4"
-    ],
-    "subtitle": "subtitles.block.generic.footsteps"
-  }
+	"entity.pig.ambient": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/ambient1"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient2"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient3"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient4"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.ambient"
+	},
+	"entity.pig.dash": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/ambient1"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient2"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient3"
+			},
+			{
+				"name": "barnyard:entity/pig/ambient4"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.dash"
+	},
+	"entity.pig.dash.recharge": {
+		"sounds": [
+		],
+		"subtitle": "subtitles.barnyard.pig.dash.recharge"
+	},
+	"entity.pig.dash.ram": {
+		"sounds": [
+		],
+		"subtitle": "subtitles.barnyard.pig.dash.ram"
+	},
+	"entity.pig.hurt": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/hurt1"
+			},
+			{
+				"name": "barnyard:entity/pig/hurt2"
+			},
+			{
+				"name": "barnyard:entity/pig/hurt3"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.hurt"
+	},
+	"entity.pig.death": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/death"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.death"
+	},
+	"entity.pig.step": {
+		"sounds": [
+			{
+				"name": "entity.pig.step",
+				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.step"
+	},
+	"entity.pig.saddle_equip": {
+		"sounds": [
+			{
+				"name": "entity.pig.saddle",
+				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.saddle_equip"
+	},
+	"entity.pig.saddle_unequip": {
+		"sounds": [
+			{
+				"name": "entity.pig.saddle",
+				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.saddle_unequip"
+	},
+	"entity.pig.sniff": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/sniff"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.sniff"
+	},
+	"block.thatch.break": {
+		"sounds": [
+			"barnyard:block/thatch/heavy1",
+			"barnyard:block/thatch/heavy2",
+			"barnyard:block/thatch/heavy3",
+			"barnyard:block/thatch/heavy4"
+		],
+		"subtitle": "subtitles.block.generic.break"
+	},
+	"block.thatch.fall": {
+		"sounds": [
+			{
+				"name": "barnyard:block.thatch.break",
+				"type": "event"
+			}
+		]
+	},
+	"block.thatch.hit": {
+		"sounds": [
+			{
+				"name": "barnyard:block.thatch.step",
+				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.block.generic.hit"
+	},
+	"block.thatch.place": {
+		"sounds": [
+			{
+				"name": "barnyard:block.thatch.break",
+				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.block.generic.place"
+	},
+	"block.thatch.step": {
+		"sounds": [
+			"barnyard:block/thatch/light1",
+			"barnyard:block/thatch/light2",
+			"barnyard:block/thatch/light3",
+			"barnyard:block/thatch/light4"
+		],
+		"subtitle": "subtitles.block.generic.footsteps"
+	}
 }
