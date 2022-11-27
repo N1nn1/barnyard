@@ -1,5 +1,8 @@
 package com.ninni.barnyard.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ninni.barnyard.entities.BarnyardPig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,7 +11,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.client.model.geom.PartNames.BODY;
 import static net.minecraft.client.model.geom.PartNames.LEFT_ARM;
@@ -152,20 +154,41 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
         float pi = (float) Math.PI;
         float speed = 1.5f;
         float degree = 1.0f;
+        float tilt = Math.min(limbDistance, 1.0f);
 
         this.rightLeg.xRot = Mth.cos(limbAngle * 0.7f * speed) * 1.4f * degree * limbDistance;
         this.leftLeg.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;
         this.rightArm.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;
         this.leftArm.xRot = Mth.cos(limbAngle * 0.7f * speed) * 1.4f * degree * limbDistance;
+        this.tail.yRot = Mth.cos(limbAngle * 0.7f * speed + pi/2) * 1.4f * degree * limbDistance;
+        this.body.zRot = Mth.cos(limbAngle * 0.35f * speed + pi/2) * 0.25f * degree * limbDistance;
+        this.body.y = Mth.cos(limbAngle * 0.35f * speed + pi) * 1 * degree * limbDistance + 17;
+        this.rightEar.xRot = Mth.cos(animationProgress * speed * 0.15F) * degree * 0.2F * 0.5F - 0.3927F;
+        this.leftEar.xRot = Mth.cos(animationProgress * speed * 0.15F + 0.5F) * degree * 0.2F * 0.5F - 0.3927F;
+        if (entity.isVehicle()) this.body.xRot = tilt * 0.5F - 0.15F;
+        else this.body.xRot = 0F;
+    }
+
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, float f, float g, float h, float k) {
+        if (this.young) {
+            poseStack.pushPose();
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+            poseStack.translate(0.0,1.5F, 0.0);
+            this.getScalableParts().forEach(modelPart -> modelPart.render(poseStack, vertexConsumer, i, j, f, g, h, k));
+            poseStack.popPose();
+        } else {
+            this.getScalableParts().forEach(modelPart -> modelPart.render(poseStack, vertexConsumer, i, j, f, g, h, k));
+        }
+
     }
 
     @Override
-    public @NotNull ModelPart root() {
+    public ModelPart root() {
         return this.root;
     }
 
-    public ModelPart getBody() {
-        return this.body;
+    public Iterable<ModelPart> getScalableParts() {
+        return ImmutableList.of(this.body, this.leftArm, this.leftLeg, this.rightArm, this.rightLeg);
     }
 
 }

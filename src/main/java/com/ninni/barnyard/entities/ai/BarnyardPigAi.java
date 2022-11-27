@@ -5,35 +5,19 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.entities.ai.tasks.BarnyardPigPanic;
 import com.ninni.barnyard.entities.ai.tasks.GroundSniffing;
 import com.ninni.barnyard.entities.ai.tasks.PopItemFromGround;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
+import com.ninni.barnyard.init.BarnyardTags;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.behavior.AnimalMakeLove;
-import net.minecraft.world.entity.ai.behavior.AnimalPanic;
-import net.minecraft.world.entity.ai.behavior.BabyFollowAdult;
-import net.minecraft.world.entity.ai.behavior.CountDownCooldownTicks;
-import net.minecraft.world.entity.ai.behavior.DoNothing;
-import net.minecraft.world.entity.ai.behavior.FollowTemptation;
-import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
-import net.minecraft.world.entity.ai.behavior.MoveToTargetSink;
-import net.minecraft.world.entity.ai.behavior.RandomStroll;
-import net.minecraft.world.entity.ai.behavior.RunOne;
-import net.minecraft.world.entity.ai.behavior.RunSometimes;
-import net.minecraft.world.entity.ai.behavior.SetEntityLookTarget;
-import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromLookTarget;
-import net.minecraft.world.entity.ai.behavior.Swim;
-import net.minecraft.world.entity.ai.behavior.warden.SetRoarTarget;
-import net.minecraft.world.entity.ai.behavior.warden.Sniffing;
-import net.minecraft.world.entity.ai.behavior.warden.TryToSniff;
+import net.minecraft.world.entity.ai.behavior.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class BarnyardPigAi {
@@ -56,7 +40,7 @@ public class BarnyardPigAi {
     private static void initCoreActivity(Brain<BarnyardPig> brain) {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new Swim(0.8f),
-                new AnimalPanic(2.0f),
+                new BarnyardPigPanic(1.35f),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)
@@ -84,6 +68,6 @@ public class BarnyardPigAi {
     }
 
     public static Ingredient getTemptations() {
-        return Ingredient.of(Items.CARROT);
+        return Ingredient.of(BarnyardTags.PIG_TEMPTS);
     }
 }

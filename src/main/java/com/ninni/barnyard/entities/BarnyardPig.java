@@ -5,6 +5,8 @@ import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
+import com.ninni.barnyard.init.BarnyardTags;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.DebugPackets;
@@ -81,9 +83,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     public void travel(Vec3 vec3) {
-        if (!this.isAlive()) {
-            return;
-        }
+        if (!this.isAlive()) return;
+
         Entity entity = this.getControllingPassenger();
         if (!this.isVehicle() || !(entity instanceof Player)) {
             this.maxUpStep = 0.5f;
@@ -99,9 +100,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         this.yHeadRot = this.getYRot();
         this.maxUpStep = 1.0f;
         this.flyingSpeed = this.getSpeed() * 0.1f;
-        if (steering.boosting && steering.boostTime++ > 2) {
-            steering.boosting = false;
-        }
+        if (steering.boosting && steering.boostTime++ > 2) steering.boosting = false;
+
+
         if (steering.boostTime <= 3) {
             this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D), this::isValidTarget).forEach(this::damageRamTarget);
         }
@@ -134,23 +135,36 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand interactionHand) {
-        boolean bl = this.isFood(player.getItemInHand(interactionHand));
-        if (!bl && this.isSaddled() && !this.isVehicle() && !player.isSecondaryUseActive()) {
-            if (!this.level.isClientSide) {
-                player.startRiding(this);
-            }
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        boolean bl = this.isFood(stack) || stack.is(ConventionalItemTags.SHEARS);
+        InteractionResult interactionResult = super.mobInteract(player, hand);
+
+        if (this.isSaddled() && stack.is(ConventionalItemTags.SHEARS)) {
+            this.steering.setSaddle(false);
+            if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            this.spawnAtLocation(Items.SADDLE);
+            //TODO custom sound
             return InteractionResult.sidedSuccess(this.level.isClientSide);
         }
-        InteractionResult interactionResult = super.mobInteract(player, interactionHand);
+
+        if (!bl && this.isSaddled() && !this.isVehicle() && !player.isSecondaryUseActive()) {
+            if (!this.level.isClientSide) player.startRiding(this);
+            return InteractionResult.sidedSuccess(this.level.isClientSide);
+        }
+
         if (!interactionResult.consumesAction()) {
-            ItemStack itemStack = player.getItemInHand(interactionHand);
-            if (itemStack.is(Items.SADDLE)) {
-                return itemStack.interactLivingEntity(player, this, interactionHand);
+            if (stack.is(Items.SADDLE)) {
+                return stack.interactLivingEntity(player, this, hand);
             }
             return InteractionResult.PASS;
         }
+
         return interactionResult;
+    }
+
+    public boolean isFood(ItemStack itemStack) {
+        return itemStack.is(BarnyardTags.PIG_BREEDS);
     }
 
     @Override
@@ -214,7 +228,11 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0).add(Attributes.MOVEMENT_SPEED, 0.2f).add(Attributes.ATTACK_DAMAGE, 4.0);
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 10.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.2f)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5f)
+                .add(Attributes.ATTACK_DAMAGE, 4.0);
     }
 
     @Override
