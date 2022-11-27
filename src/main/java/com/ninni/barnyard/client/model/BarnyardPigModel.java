@@ -6,10 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +50,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
         this.rightEar = this.body.getChild(RIGHT_EAR);
     }
 
-    public static LayerDefinition getLayerDefinition() {
+    public static LayerDefinition getLayerDefinition(CubeDeformation cubeDeformation) {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -61,7 +58,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
                 BODY,
                 CubeListBuilder.create()
                         .texOffs(0, 0)
-                        .addBox(-5.0F, -6.0F, -7.0F, 10.0F, 10.0F, 15.0F),
+                        .addBox(-5.0F, -6.0F, -7.0F, 10.0F, 10.0F, 15.0F, cubeDeformation),
                 PartPose.offset(0.0F, 17.0F, 0.0F)
         );
 
@@ -69,7 +66,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
                 LEFT_EAR,
                 CubeListBuilder.create()
                         .texOffs(35, 8)
-                        .addBox(-3.0F, -1.5F, -4.0F, 4.0F, 3.0F, 4.0F),
+                        .addBox(-3.0F, -1.5F, -4.0F, 4.0F, 3.0F, 4.0F, cubeDeformation),
                 PartPose.offsetAndRotation(5.0F, -3.5F, -4.0F, -0.3927F, 0.0F, 0.0F)
         );
 
@@ -78,7 +75,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
                 CubeListBuilder.create()
                         .texOffs(35, 8)
                         .mirror()
-                        .addBox(-1.0F, -1.5F, -4.0F, 4.0F, 3.0F, 4.0F)
+                        .addBox(-1.0F, -1.5F, -4.0F, 4.0F, 3.0F, 4.0F, cubeDeformation)
                         .mirror(false),
                 PartPose.offsetAndRotation(-5.0F, -3.5F, -4.0F, -0.3927F, 0.0F, 0.0F)
         );
@@ -87,18 +84,18 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
                 NOSE,
                 CubeListBuilder.create()
                         .texOffs(0, 25)
-                        .addBox(-2.0F, -1.5F, -2.0F, 4.0F, 3.0F, 2.0F)
+                        .addBox(-2.0F, -1.5F, -2.0F, 4.0F, 3.0F, 2.0F, cubeDeformation)
                         .texOffs(0, 12)
-                        .addBox(3.0F, -0.5F, -1.0F, 1.0F, 2.0F, 1.0F)
+                        .addBox(3.0F, -0.5F, -1.0F, 1.0F, 2.0F, 1.0F, cubeDeformation)
                         .texOffs(5, 13)
-                        .addBox(2.0F, 0.5F, -1.0F, 1.0F, 1.0F, 1.0F)
+                        .addBox(2.0F, 0.5F, -1.0F, 1.0F, 1.0F, 1.0F, cubeDeformation)
                         .texOffs(5, 13)
                         .mirror()
-                        .addBox(-3.0F, 0.5F, -1.0F, 1.0F, 1.0F, 1.0F)
+                        .addBox(-3.0F, 0.5F, -1.0F, 1.0F, 1.0F, 1.0F, cubeDeformation)
                         .mirror(false)
                         .texOffs(0, 12)
                         .mirror()
-                        .addBox(-4.0F, -0.5F, -1.0F, 1.0F, 2.0F, 1.0F)
+                        .addBox(-4.0F, -0.5F, -1.0F, 1.0F, 2.0F, 1.0F, cubeDeformation)
                         .mirror(false),
                 PartPose.offset(0.0F, 1.5F, -7.0F)
         );
@@ -107,28 +104,32 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
                 TAIL,
                 CubeListBuilder.create()
                         .texOffs(0, 5)
-                        .addBox(0.0F, -2.5F, 0.0F, 0.0F, 3.0F, 3.0F),
+                        .addBox(0.0F, -2.5F, 0.0F, 0.0F, 3.0F, 3.0F, cubeDeformation),
                 PartPose.offset(0.0F, -2.5F, 8.0F)
         );
 
         PartDefinition leftArm = partdefinition.addOrReplaceChild(
                 LEFT_ARM,
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F),
+                        .texOffs(0, 0)
+                        .addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F, cubeDeformation),
                 PartPose.offset(3.48F, 20.5F, -2.5F)
         );
 
         PartDefinition leftLeg = partdefinition.addOrReplaceChild(
                 LEFT_LEG,
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F),
+                        .texOffs(0, 0)
+                        .addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F, cubeDeformation),
                 PartPose.offset(3.0F, 20.5F, 7.5F)
         );
 
         PartDefinition rightLeg = partdefinition.addOrReplaceChild(
                 RIGHT_LEG,
                 CubeListBuilder.create()
-                        .texOffs(0, 0).mirror().addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F)
+                        .texOffs(0, 0)
+                        .mirror()
+                        .addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F, cubeDeformation)
                         .mirror(false),
                 PartPose.offset(-3.0F, 20.5F, 7.5F)
         );
@@ -136,7 +137,9 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
         PartDefinition rightArm = partdefinition.addOrReplaceChild(
                 RIGHT_ARM,
                 CubeListBuilder.create()
-                        .texOffs(0, 0).mirror().addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F)
+                        .texOffs(0, 0)
+                        .mirror()
+                        .addBox(-1.5F, -1.5F, -1.5F, 3.0F, 5.0F, 3.0F, cubeDeformation)
                         .mirror(false),
                 PartPose.offset(-3.48F, 20.5F, -2.5F)
         );

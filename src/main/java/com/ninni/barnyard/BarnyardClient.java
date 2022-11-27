@@ -11,6 +11,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.RenderType;
 
 @Environment(EnvType.CLIENT)
@@ -22,6 +23,7 @@ public class BarnyardClient implements ClientModInitializer {
                 BarnyardBlocks.THATCH
         );
         EntityRendererRegistry.register(BarnyardEntityTypes.PIG, BarnyardPigRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG, BarnyardPigModel::getLayerDefinition);
+        EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG, () -> BarnyardPigModel.getLayerDefinition(CubeDeformation.NONE));
+        EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG_SADDLE, () -> BarnyardPigModel.getLayerDefinition(new CubeDeformation(0.5F)));
     }
 }
