@@ -18,10 +18,10 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 
-public class MudRolling extends Behavior<BarnyardPig> {
+public class StartMudRolling extends Behavior<BarnyardPig> {
 
-    public MudRolling() {
-        super(ImmutableMap.of(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.NEAREST_MUD, MemoryStatus.VALUE_PRESENT));
+    public StartMudRolling() {
+        super(ImmutableMap.of(BarnyardMemoryModules.MUD_COOLDOWN, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.NEAREST_MUD, MemoryStatus.VALUE_PRESENT));
     }
 
     @Override

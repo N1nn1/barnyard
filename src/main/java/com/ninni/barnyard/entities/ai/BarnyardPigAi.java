@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
-import com.ninni.barnyard.entities.ai.tasks.MudRolling;
+import com.ninni.barnyard.entities.ai.tasks.StartMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
 import com.ninni.barnyard.entities.ai.tasks.TickMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.TickSniffing;
@@ -53,7 +53,7 @@ public class BarnyardPigAi {
     public static final int SNIFFING_DURATION = 120;
     public static final int MUD_ROLL_DURATION = 110;
 
-    public static final UniformInt SNIFFING_COOLDOWN = UniformInt.of(6000, 9600);
+    public static final UniformInt SNIFFING_COOLDOWN = UniformInt.of(12000, 36000);
     public static final UniformInt MUD_ROLLING_COOLDOWN = UniformInt.of(6000, 9600);
 
     protected static final float FAST_SPEED = 1.5F;
@@ -85,14 +85,13 @@ public class BarnyardPigAi {
     private static void initCoreActivity(Brain<BarnyardPig> brain) {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new Swim(0.8f),
-                new CalmDown(),
+                new CalmDown(48),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new StopBeingAngryIfTargetDead<>(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
                 new CountDownCooldownTicks(BarnyardMemoryModules.PIG_SNIFFING_TICKS),
-                new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_TICKS),
-                new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS)
+                new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_TICKS)
         ));
     }
 
@@ -105,7 +104,7 @@ public class BarnyardPigAi {
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
                 Pair.of(5, new RunIf<>(BarnyardPigAi::canPerformIdleActivies, new RunOne<>(ImmutableList.of(
                     Pair.of(new StartSniffing(), 0),
-                    Pair.of(new MudRolling(), 0)))
+                    Pair.of(new StartMudRolling(), 0)))
                 )),
                 Pair.of(6, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6), UniformInt.of(30, 60))),
                 Pair.of(7, new RunOne<>(ImmutableList.of(

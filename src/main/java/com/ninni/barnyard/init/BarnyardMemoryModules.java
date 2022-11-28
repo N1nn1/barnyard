@@ -17,7 +17,7 @@ public class BarnyardMemoryModules {
     public static final MemoryModuleType<BlockPos> NEAREST_MUD = register("nearest_mud");
     public static final MemoryModuleType<Unit> IS_ROLLING_IN_MUD = register("is_rolling_in_mud", Codec.unit(Unit.INSTANCE));
     public static final MemoryModuleType<Integer> MUD_ROLLING_TICKS = register("mud_rolling_ticks", Codec.INT);
-    public static final MemoryModuleType<Integer> MUD_ROLLING_COOLDOWN_TICKS = register("mud_rolling_cooldown_ticks", Codec.INT);
+    public static final MemoryModuleType<Unit> MUD_COOLDOWN = register("mud_cooldown", Codec.unit(Unit.INSTANCE));
 
     protected static <U> MemoryModuleType<U> register(String string, Codec<U> codec) {
         return Registry.register(Registry.MEMORY_MODULE_TYPE, Barnyard.id(string), new MemoryModuleType<U>(Optional.of(codec)));

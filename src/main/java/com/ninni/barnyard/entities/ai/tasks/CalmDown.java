@@ -10,8 +10,11 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 
 public class CalmDown extends Behavior<LivingEntity> {
 
-    public CalmDown() {
+    private int minDistance;
+
+    public CalmDown(int minDistance) {
         super(ImmutableMap.of(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT));
+        this.minDistance = minDistance;
     }
 
     @Override
@@ -22,7 +25,7 @@ public class CalmDown extends Behavior<LivingEntity> {
         }
     }
 
-    private static boolean isNearAttacker(LivingEntity mob) {
-        return mob.getBrain().getMemory(MemoryModuleType.HURT_BY_ENTITY).filter(next -> mob.distanceToSqr(next) <= 48).isPresent();
+    private boolean isNearAttacker(LivingEntity mob) {
+        return mob.getBrain().getMemory(MemoryModuleType.HURT_BY_ENTITY).filter(next -> mob.distanceToSqr(next) <= minDistance).isPresent();
     }
 }

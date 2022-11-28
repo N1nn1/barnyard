@@ -1,11 +1,16 @@
 package com.ninni.barnyard.entities;
 
-import com.ninni.barnyard.init.*;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
+import com.ninni.barnyard.init.BarnyardEntityTypes;
+import com.ninni.barnyard.init.BarnyardMemoryModules;
+import com.ninni.barnyard.init.BarnyardParticleTypes;
+import com.ninni.barnyard.init.BarnyardSensorTypes;
+import com.ninni.barnyard.init.BarnyardSounds;
+import com.ninni.barnyard.init.BarnyardTags;
 
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
@@ -18,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Unit;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -52,6 +58,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, CooldownRideableJumping {
+
     protected static final ImmutableList<SensorType<? extends Sensor<? super BarnyardPig>>> SENSOR_TYPES = ImmutableList.of(
             SensorType.NEAREST_LIVING_ENTITIES,
             SensorType.NEAREST_PLAYERS,
@@ -61,6 +68,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             BarnyardSensorTypes.PIG_TEMPTATIONS,
             BarnyardSensorTypes.NEAREST_MUD_SENSOR
     );
+
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(
             MemoryModuleType.LOOK_TARGET,
             MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
@@ -88,15 +96,17 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             BarnyardMemoryModules.PIG_SNIFFING_TICKS,
 
             BarnyardMemoryModules.IS_ROLLING_IN_MUD,
-            BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS,
+            BarnyardMemoryModules.MUD_COOLDOWN,
             BarnyardMemoryModules.MUD_ROLLING_TICKS,
             BarnyardMemoryModules.NEAREST_MUD
     );
+
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
+
     private final ItemBasedSteering steering;
     private int chargingCooldown = 0;
     protected float playerJumpPendingScale;
@@ -112,14 +122,14 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     public void travel(Vec3 input) {
         if (!isAlive()) return;
         if (!hasPose(Pose.STANDING) && isOnGround()) {
-            setDeltaMovement(getDeltaMovement().multiply(0.0, 1.0, 0.0));
-            input = input.multiply(0.0, 1.0, 0.0);
+            setDeltaMovement(getDeltaMovement().multiply(0, 1, 0));
+            input = input.multiply(0, 1, 0);
         }
         float f = getSteeringSpeed();
         boolean flag = playerJumpPendingScale > 0.0F && !isCharging() && onGround;
         if (flag) {
             f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
-            setDeltaMovement(getDeltaMovement().add(getLookAngle().multiply(1.0, 0.0, 1.0).normalize().scale((double) (6.44444F) * getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) getBlockSpeedFactor()).add(0.0, (double) (1.4285f * f) * 1.5F, 0.0)));
+            setDeltaMovement(getDeltaMovement().add(getLookAngle().multiply(1, 0, 1).normalize().scale((double) (6.44444F) * getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) getBlockSpeedFactor()).add(0, (double) (1.4285f * f) * 1.5F, 0)));
             chargingCooldown = 55;
             setCharging(true);
             hasImpulse = false;
@@ -145,9 +155,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public void aiStep() {
-        if (this.isMuddy() && this.random.nextInt(5) == 0) {
-            for (int i = 0; i < this.random.nextInt(1) + 1; ++i) {
-                this.level.addParticle(BarnyardParticleTypes.MUD, this.getRandomX(0.8), this.getY() + 0.5F, this.getRandomZ(0.8), 0.0, this.random.nextFloat() * 5, 0.0);
+        if (isMuddy() && random.nextInt(5) == 0) {
+            for (int i = 0; i < random.nextInt(1) + 1; ++i) {
+                level.addParticle(BarnyardParticleTypes.MUD, getRandomX(0.8), getY() + 0.5F, getRandomZ(0.8), 0, random.nextFloat() * 5, 0);
             }
         }
         super.aiStep();
@@ -314,6 +324,10 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType type, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt){
         if (level.getRandom().nextFloat() < 0.2F) setHasTusk(true);
+
+        brain.setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, BarnyardPigAi.SNIFFING_COOLDOWN.sample(random));
+        brain.setMemoryWithExpiry(BarnyardMemoryModules.MUD_COOLDOWN, Unit.INSTANCE, BarnyardPigAi.MUD_ROLLING_COOLDOWN.sample(random));
+
         return super.finalizeSpawn(level, difficulty, type, data, nbt);
     }
 
