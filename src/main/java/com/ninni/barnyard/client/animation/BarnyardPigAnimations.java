@@ -310,9 +310,9 @@ public class BarnyardPigAnimations {
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(5.041677f, KeyframeAnimations.degreeVec(35f, 0f, 0f),
+                                new Keyframe(5.041677f, KeyframeAnimations.degreeVec(15f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(5.25f, KeyframeAnimations.degreeVec(-55f, 0f, 0f),
+                                new Keyframe(5.25f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM)))
@@ -338,9 +338,9 @@ public class BarnyardPigAnimations {
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(4.791677f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(5f, KeyframeAnimations.degreeVec(35f, 0f, 0f),
+                                new Keyframe(5f, KeyframeAnimations.degreeVec(15f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
-                                new Keyframe(5.208343f, KeyframeAnimations.degreeVec(-55f, 0f, 0f),
+                                new Keyframe(5.208343f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.458343f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM)))
