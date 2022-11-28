@@ -54,6 +54,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -160,6 +161,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
                 level.addParticle(BarnyardParticleTypes.MUD, getRandomX(0.8), getY() + 0.5F, getRandomZ(0.8), 0, random.nextFloat() * 5, 0);
             }
         }
+        if (isBaby() && getFeetBlockState().is(Blocks.MUD)) setMuddy(true);
+        if (isMuddy() && isInWaterRainOrBubble()) setMuddy(false);
         super.aiStep();
     }
 
