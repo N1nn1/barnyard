@@ -47,7 +47,7 @@ public class Barnyard implements ModInitializer {
 			Item item = stack.getItem();
 			if (!player.getCooldowns().isOnCooldown(item) && player.isPassenger() && stack.is(Items.CARROT_ON_A_STICK) && vehicle instanceof ItemSteerable itemSteerable && vehicle.getType() == BarnyardEntityTypes.PIG) {
 				itemSteerable.boost();
-				stack.hurtAndBreak(7, player, p -> p.broadcastBreakEvent(hand));
+				stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
 				player.getCooldowns().addCooldown(item, 20);
 				if (stack.isEmpty()) {
 					ItemStack itemStack2 = new ItemStack(Items.FISHING_ROD);
