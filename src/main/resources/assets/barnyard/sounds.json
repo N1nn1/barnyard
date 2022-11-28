@@ -40,6 +40,14 @@
 		],
 		"subtitle": "subtitles.barnyard.pig.dash.ram"
 	},
+	"entity.pig.mud_roll": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/mud_roll"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.mud_roll"
+	},
 	"entity.pig.hurt": {
 		"sounds": [
 			{
