@@ -3,7 +3,6 @@ package com.ninni.barnyard.entities.ai;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
@@ -20,13 +19,13 @@ import com.ninni.barnyard.init.BarnyardTags;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.AnimalMakeLove;
 import net.minecraft.world.entity.ai.behavior.BabyFollowAdult;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.CountDownCooldownTicks;
 import net.minecraft.world.entity.ai.behavior.DoNothing;
-import net.minecraft.world.entity.ai.behavior.EraseMemoryIf;
 import net.minecraft.world.entity.ai.behavior.FollowTemptation;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 import net.minecraft.world.entity.ai.behavior.MeleeAttack;
@@ -83,8 +82,7 @@ public class BarnyardPigAi {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new Swim(0.8f),
                 new CalmDown(),
-                new EraseMemoryIf<>((mob) -> mob.getBrain().hasMemoryValue(MemoryModuleType.IS_PANICKING), MemoryModuleType.IS_SNIFFING),
-                new RunIf<>((mob) -> !mob.hasTusk(), SetWalkTargetAwayFrom.entity(MemoryModuleType.HURT_BY_ENTITY, FAST_SPEED, 20, true)),
+                new RunIf<>((mob) -> !mob.hasTusk() && mob.getPose() == Pose.STANDING, SetWalkTargetAwayFrom.entity(MemoryModuleType.HURT_BY_ENTITY, FAST_SPEED, 20, true)),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new StopBeingAngryIfTargetDead<>(),
@@ -101,14 +99,15 @@ public class BarnyardPigAi {
                 Pair.of(2, new AnimalMakeLove(BarnyardEntityTypes.PIG, 1)),
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
-                Pair.of(5, new RunIf<>((mob) -> !mob.isBaby(), new StartSniffing())),
-                Pair.of(6, new MudRolling()),
-                Pair.of(7, new RunOne<>(ImmutableMap.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_ABSENT),
-                        ImmutableList.of(
-                                Pair.of(new RandomStroll(1), 2),
-                                Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
-                                Pair.of(new DoNothing(30, 60), 1)
-                        )))),
+                Pair.of(5, new RunIf<BarnyardPig>((mob) -> BarnyardPig.canPerformIdleActivies(mob), new RunOne<>(ImmutableList.of(
+                    Pair.of(new StartSniffing(), 0),
+                    Pair.of(new MudRolling(), 0)))
+                )),
+                Pair.of(7, new RunOne<>(ImmutableList.of(
+                    Pair.of(new RandomStroll(1), 2),
+                    Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
+                    Pair.of(new DoNothing(30, 60), 1)
+                )))),
                 ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_ABSENT)));
     }
 
@@ -131,7 +130,7 @@ public class BarnyardPigAi {
     }
 
     public static void updateActivity(BarnyardPig pig) {
-        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(BarnyardActivities.MUD_ROLLING, Activity.FIGHT, Activity.IDLE, Activity.SNIFF));
+        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.SNIFF, BarnyardActivities.MUD_ROLLING, Activity.FIGHT, Activity.IDLE));
     }
 
     public static Ingredient getTemptations() {

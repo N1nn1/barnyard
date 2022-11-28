@@ -33,6 +33,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.Animal;
@@ -92,7 +93,17 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     public BarnyardPig(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.steering = new ItemBasedSteering(this.entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
+        steering = new ItemBasedSteering(entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
+    }
+
+    public static boolean canPerformIdleActivies(BarnyardPig pig) {
+        Brain<BarnyardPig> brain = pig.getBrain();
+        if (pig.isVehicle()) return false;
+        if (pig.isInLove()) return false;
+        if (brain.checkMemory(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT)) return false;
+        if (brain.checkMemory(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_PRESENT)) return false;
+        if (brain.checkMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT)) return false;
+        return true;
     }
 
     @Override
@@ -138,20 +149,21 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             this.setDeltaMovement(Vec3.ZERO);
         }
         this.tryCheckInsideBlocks();
+
     }
 
     private boolean isValidTarget(LivingEntity mob) {
-        return mob.isAlive() && !mob.is(this) && !mob.is(this.getControllingPassenger());
+        return mob.isAlive() && !mob.is(this) && !mob.is(getControllingPassenger());
     }
 
     private void damageRamTarget(LivingEntity mob) {
         if (getControllingPassenger() != null && getControllingPassenger() instanceof LivingEntity passenger) {
-            Vec3 vec33 = mob.position().subtract(this.position().add(0.0, 1.6, 0.0)).normalize();
+            Vec3 vec33 = mob.position().subtract(position().add(0.0, 1.6, 0.0)).normalize();
             double d = 0.25 * (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
-            mob.hurt(source, (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+            mob.hurt(source, (float)getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
     }
     
@@ -204,20 +216,20 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor) {
-        if (DATA_BOOST_TIME.equals(entityDataAccessor) && this.level.isClientSide) {
-            this.steering.onSynced();
+        if (DATA_BOOST_TIME.equals(entityDataAccessor) && level.isClientSide) {
+            steering.onSynced();
         }
 
         if (DATA_POSE.equals(entityDataAccessor)) {
-            if (this.getPose() == Pose.SNIFFING) {
-                this.sniffingAnimationState.start(this.tickCount);
+            if (getPose() == Pose.SNIFFING) {
+                sniffingAnimationState.start(tickCount);
             } else {
-                this.sniffingAnimationState.stop();
+                sniffingAnimationState.stop();
             }
-            if (this.getPose() == Pose.DIGGING) {
-                this.rollingInMudAnimationState.start(this.tickCount);
+            if (getPose() == Pose.DIGGING) {
+                rollingInMudAnimationState.start(tickCount);
             } else {
-                this.rollingInMudAnimationState.stop();
+                rollingInMudAnimationState.stop();
             }
         }
         super.onSyncedDataUpdated(entityDataAccessor);
@@ -226,12 +238,12 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     @Nullable
     @Override
     public Entity getControllingPassenger() {
-        Entity entity = this.getFirstPassenger();
-        return entity != null && this.canBeControlledBy(entity) ? entity : null;
+        Entity entity = getFirstPassenger();
+        return entity != null && canBeControlledBy(entity) ? entity : null;
     }
 
     private boolean canBeControlledBy(Entity entity) {
-        if (this.isSaddled() && entity instanceof Player player) {
+        if (isSaddled() && entity instanceof Player player) {
             return player.getMainHandItem().is(Items.CARROT_ON_A_STICK) || player.getOffhandItem().is(Items.CARROT_ON_A_STICK);
         }
         return false;
@@ -240,48 +252,48 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(TUSK, false);
-        this.entityData.define(DATA_SADDLE_ID, false);
-        this.entityData.define(MUDDY, false);
-        this.entityData.define(DATA_BOOST_TIME, 0);
+        entityData.define(TUSK, false);
+        entityData.define(DATA_SADDLE_ID, false);
+        entityData.define(MUDDY, false);
+        entityData.define(DATA_BOOST_TIME, 0);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        compoundTag.putBoolean("Tusk", this.hasTusk());
-        compoundTag.putBoolean("Muddy", this.isMuddy());
-        this.steering.addAdditionalSaveData(compoundTag);
+        compoundTag.putBoolean("Tusk", hasTusk());
+        compoundTag.putBoolean("Muddy", isMuddy());
+        steering.addAdditionalSaveData(compoundTag);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        this.setHasTusk(compoundTag.getBoolean("Tusk"));
-        this.setMuddy(compoundTag.getBoolean("Muddy"));
-        this.steering.readAdditionalSaveData(compoundTag);
+        setHasTusk(compoundTag.getBoolean("Tusk"));
+        setMuddy(compoundTag.getBoolean("Muddy"));
+        steering.readAdditionalSaveData(compoundTag);
     }
 
     public boolean isMuddy() {
-        return this.entityData.get(MUDDY);
+        return entityData.get(MUDDY);
     }
 
     public void setMuddy(boolean muddy) {
-        this.entityData.set(MUDDY, muddy);
+        entityData.set(MUDDY, muddy);
     }
 
     public boolean hasTusk() {
-        return this.entityData.get(TUSK);
+        return entityData.get(TUSK);
     }
 
     public void setHasTusk(boolean tusk) {
-        this.entityData.set(TUSK, tusk);
+        entityData.set(TUSK, tusk);
     }
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
         if (serverLevelAccessor.getRandom().nextFloat() < 0.2f) {
-            this.setHasTusk(true);
+            setHasTusk(true);
         }
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
     }
@@ -301,7 +313,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     protected Brain<?> makeBrain(Dynamic<?> dynamic) {
-        return BarnyardPigAi.makeBrain(this.brainProvider().makeBrain(dynamic));
+        return BarnyardPigAi.makeBrain(brainProvider().makeBrain(dynamic));
     }
 
     @Override
@@ -312,12 +324,12 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     protected void customServerAiStep() {
-        this.level.getProfiler().push("barnyardPigBrain");
-        this.getBrain().tick((ServerLevel)this.level, this);
-        this.level.getProfiler().pop();
-        this.level.getProfiler().push("barnyardPigActivityUpdate");
+        level.getProfiler().push("barnyardPigBrain");
+        getBrain().tick((ServerLevel)level, this);
+        level.getProfiler().pop();
+        level.getProfiler().push("barnyardPigActivityUpdate");
         BarnyardPigAi.updateActivity(this);
-        this.level.getProfiler().pop();
+        level.getProfiler().pop();
         super.customServerAiStep();
     }
 
@@ -334,8 +346,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
+    @Nullable
     protected SoundEvent getAmbientSound() {
-        return BarnyardSounds.PIG_AMBIENT;
+        return getPose() == Pose.STANDING ? BarnyardSounds.PIG_AMBIENT : null;
     }
 
     @Override
@@ -348,48 +361,53 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         return BarnyardSounds.PIG_DEATH;
     }
 
+    protected SoundEvent getStepSound() {
+        return isMuddy() ? BarnyardSounds.PIG_STEP_MUDDY : BarnyardSounds.PIG_STEP;
+    }
+
     protected void playStepSound(BlockPos blockPos, BlockState blockState) {
-        this.playSound(BarnyardSounds.PIG_STEP, 0.15F, 1.0F);
+        playSound(getStepSound(), 0.15F, 1.0F);
     }
 
     protected void dropEquipment() {
         super.dropEquipment();
-        if (this.isSaddled()) {
-            this.spawnAtLocation(Items.SADDLE);
+        if (isSaddled()) {
+            spawnAtLocation(Items.SADDLE);
         }
 
     }
 
     public void positionRider(Entity entity) {
         super.positionRider(entity);
-        if (this.hasPassenger(entity)) {
-            float f = Mth.cos(this.yBodyRot * 0.0175F);
-            float g = Mth.sin(this.yBodyRot * 0.0175F);
-            entity.setPos(this.getX() + (0.2F * g), this.getY() + this.getPassengersRidingOffset() + entity.getMyRidingOffset() - 0.05F, this.getZ() - (0.2F * f));
+        if (hasPassenger(entity)) {
+            float f = Mth.cos(yBodyRot * 0.0175F);
+            float g = Mth.sin(yBodyRot * 0.0175F);
+            entity.setPos(getX() + (0.2F * g), getY() + getPassengersRidingOffset() + entity.getMyRidingOffset() - 0.05F, getZ() - (0.2F * f));
         }
     }
 
     @Override
     public boolean isSaddleable() {
-        return this.isAlive() && !this.isBaby() && this.hasTusk();
+        return isAlive() && !isBaby() && hasTusk();
     }
 
     @Override
     public void equipSaddle(@Nullable SoundSource soundSource) {
-        this.steering.setSaddle(true);
+        steering.setSaddle(true);
         if (soundSource != null) {
-            this.level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1.0f);
+            level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1.0f);
         }
     }
 
     @Override
     public boolean isSaddled() {
-        return this.steering.hasSaddle();
+        return steering.hasSaddle();
     }
 
     @Override
     public boolean boost() {
-        return this.steering.boost(this.getRandom());
+        playSound(BarnyardSounds.PIG_DASH);
+        return steering.boost(getRandom());
     }
 
     @Override
@@ -399,7 +417,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     public float getSteeringSpeed() {
-        return (float)this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.225f;
+        return (float)getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.225f;
     }
 
 }
