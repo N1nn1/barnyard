@@ -51,6 +51,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class BarnyardPigAi {
 
     public static final int SNIFFING_DURATION = 120;
+    public static final int MUD_ROLL_DURATION = 110;
 
     protected static final float FAST_SPEED = 1.5F;
 
@@ -68,8 +69,8 @@ public class BarnyardPigAi {
 
     private static void initMudRollingActivity(Brain<BarnyardPig> brain) {
         brain.addActivityAndRemoveMemoryWhenStopped(BarnyardActivities.MUD_ROLLING, 5, ImmutableList.of(
-                new TickMudRolling()
-        ), BarnyardMemoryModules.MUD_ROLLING_TICKS);
+                new TickMudRolling(MUD_ROLL_DURATION)
+        ), BarnyardMemoryModules.IS_ROLLING_IN_MUD);
     }
 
     private static void initSniffingActivity(Brain<BarnyardPig> brain) {

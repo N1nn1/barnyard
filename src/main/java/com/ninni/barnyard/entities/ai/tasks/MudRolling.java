@@ -4,12 +4,15 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardSounds;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -18,11 +21,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 public class MudRolling extends Behavior<BarnyardPig> {
 
     public MudRolling() {
-        super(ImmutableMap.of(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.NEAREST_MUD, MemoryStatus.VALUE_PRESENT, BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_ABSENT, MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT, MemoryModuleType.BREED_TARGET, MemoryStatus.VALUE_ABSENT, MemoryModuleType.IS_PANICKING, MemoryStatus.VALUE_ABSENT));
-    }
-
-    protected boolean canStillUse(ServerLevel level, BarnyardPig mob, long l) {
-        return mob.getBrain().hasMemoryValue(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS);
+        super(ImmutableMap.of(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.NEAREST_MUD, MemoryStatus.VALUE_PRESENT));
     }
 
     @Override
@@ -36,9 +35,14 @@ public class MudRolling extends Behavior<BarnyardPig> {
             BehaviorUtils.setWalkAndLookTargetMemories(mob, pos, 1, 0);
             int distance = mob.blockPosition().distManhattan(pos);
             if (distance <= 1) {
+                Brain<BarnyardPig> brain = mob.getBrain();
+
+                brain.setMemory(BarnyardMemoryModules.IS_ROLLING_IN_MUD, Unit.INSTANCE);
+                brain.setMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, BarnyardPigAi.SNIFFING_DURATION);
+                brain.eraseMemory(MemoryModuleType.WALK_TARGET);
+
                 mob.setPose(Pose.DIGGING);
                 mob.playSound(BarnyardSounds.PIG_MUD_ROLL, 1, 1);
-                mob.getBrain().setMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, 100);
             }
         });
     }

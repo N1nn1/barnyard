@@ -51,12 +51,10 @@ public class TickSniffing extends Behavior<BarnyardPig> {
 
     @Override
     protected void tick(ServerLevel level, BarnyardPig pig, long l) {
-        var memory = pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS);
-        if (memory.isPresent()) {
-            int time = memory.get();
+        pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS).ifPresent((time) -> {
             if (time > 40 && time < 64) createParticles(level, pig);
             if (time == 38) spawnItem(level, pig);
-        }
+        });
     }
 
     @Override

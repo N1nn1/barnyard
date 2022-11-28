@@ -85,12 +85,15 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             MemoryModuleType.TEMPTATION_COOLDOWN_TICKS,
             MemoryModuleType.IS_TEMPTED,
             MemoryModuleType.IS_PANICKING,
+
             MemoryModuleType.IS_SNIFFING,
             MemoryModuleType.SNIFF_COOLDOWN,
             BarnyardMemoryModules.PIG_SNIFFING_TICKS,
-            BarnyardMemoryModules.NEAREST_MUD,
+
+            BarnyardMemoryModules.IS_ROLLING_IN_MUD,
+            BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS,
             BarnyardMemoryModules.MUD_ROLLING_TICKS,
-            BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS
+            BarnyardMemoryModules.NEAREST_MUD
     );
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
@@ -110,6 +113,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     public static boolean canPerformIdleActivies(BarnyardPig pig) {
         Brain<BarnyardPig> brain = pig.getBrain();
+        if (pig.isBaby()) return false;
         if (pig.isVehicle()) return false;
         if (pig.isInLove()) return false;
         if (brain.checkMemory(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT)) return false;
