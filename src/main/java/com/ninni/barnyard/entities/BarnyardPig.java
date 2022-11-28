@@ -118,8 +118,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         if (pig.isInLove()) return false;
         if (brain.checkMemory(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT)) return false;
         if (brain.checkMemory(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_PRESENT)) return false;
-        if (brain.checkMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT)) return false;
-        return true;
+        return !brain.checkMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT);
     }
 
     @Override
@@ -128,24 +127,6 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         if (this.getBrain().getMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS).isPresent() && this.isOnGround()) {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
             vec3 = vec3.multiply(0.0, 1.0, 0.0);
-        }
-        Entity entity = this.getControllingPassenger();
-        if (!this.isVehicle() || !(entity instanceof Player)) {
-            this.maxUpStep = 0.5f;
-            this.flyingSpeed = 0.02f;
-            this.travelWithInput(vec3);
-            return;
-        }
-        this.setYRot(entity.getYRot());
-        this.yRotO = this.getYRot();
-        this.setXRot(entity.getXRot() * 0.5f);
-        this.setRot(this.getYRot(), this.getXRot());
-        this.yBodyRot = this.getYRot();
-        this.yHeadRot = this.getYRot();
-        this.maxUpStep = 1.0f;
-        this.flyingSpeed = this.getSpeed() * 0.1f;
-        if (this.steering.boosting && this.steering.boostTime++ > 2) {
-            this.steering.boosting = false;
         }
         float f = this.getSteeringSpeed();
         boolean flag = this.playerJumpPendingScale > 0.0F && !this.isCharging() && this.onGround;
@@ -157,23 +138,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             this.hasImpulse = false;
             this.playerJumpPendingScale = 0.0F;
         }
-        if (this.isControlledByLocalInstance()) {
-            if (steering.boosting && steering.boostTime < 2) {
-                f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
-            }
-            this.setSpeed(f);
-            this.travelWithInput(new Vec3(0.0, 0.0, 1.0));
-            this.lerpSteps = 0;
-        } else {
-            if (this.onGround) {
-                this.playerJumpPendingScale = 0.0F;
-                this.setCharging(false);
-            }
-            this.calculateEntityAnimation(this, false);
-            this.setDeltaMovement(Vec3.ZERO);
-        }
-        this.tryCheckInsideBlocks();
-
+        this.travel(this, this.steering, vec3);
     }
 
     @Override
@@ -204,7 +169,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
-            mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
+            mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5F);
         }
     }
 
@@ -468,9 +433,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         super.travel(vec3);
     }
 
-   @Override
+
    public float getSteeringSpeed() {
-       return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.55f;
+       return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3f;
    }
 
     @Override

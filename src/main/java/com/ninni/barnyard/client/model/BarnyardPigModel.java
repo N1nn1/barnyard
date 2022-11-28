@@ -155,12 +155,10 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
     public void setupAnim(BarnyardPig entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         float pi = (float) Math.PI;
-        float speed = 1.5f;
-        float degree = 1.0f;
-        float tilt = Math.min(limbDistance, 1.0f);
+        float speed = 1f;
+        float degree = 1f;
 
         if (entity.getPose() != Pose.SNIFFING && entity.getPose() != Pose.DIGGING) {
-
             this.rightLeg.xRot = Mth.cos(limbAngle * 0.7f * speed) * 1.4f * degree * limbDistance;
             this.leftLeg.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;
             this.rightArm.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;
@@ -170,7 +168,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
             this.body.y = Mth.cos(limbAngle * 0.35f * speed + pi) * 1 * degree * limbDistance + 17;
             this.rightEar.xRot = Mth.cos(animationProgress * speed * 0.15F) * degree * 0.2F * 0.5F - 0.3927F;
             this.leftEar.xRot = Mth.cos(animationProgress * speed * 0.15F + 0.5F) * degree * 0.2F * 0.5F - 0.3927F;
-            if (entity.isVehicle()) this.body.xRot = tilt * 0.5F - 0.15F;
+            if (entity.isCharging()) this.body.xRot = 0.25F;
             else this.body.xRot = 0F;
         }
         else {

@@ -101,7 +101,7 @@ public class BarnyardPigAi {
                 Pair.of(2, new AnimalMakeLove(BarnyardEntityTypes.PIG, 1)),
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
-                Pair.of(5, new RunIf<BarnyardPig>((mob) -> BarnyardPig.canPerformIdleActivies(mob), new RunOne<>(ImmutableList.of(
+                Pair.of(5, new RunIf<>(BarnyardPig::canPerformIdleActivies, new RunOne<>(ImmutableList.of(
                     Pair.of(new StartSniffing(), 0),
                     Pair.of(new MudRolling(), 0)))
                 )),
