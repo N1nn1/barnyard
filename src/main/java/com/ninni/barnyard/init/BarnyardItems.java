@@ -13,8 +13,8 @@ public class BarnyardItems {
     public static final Item THATCH_BLOCK = register("thatch_block", new BlockItem(BarnyardBlocks.THATCH_BLOCK, new FabricItemSettings().group(CreativeModeTab.TAB_BUILDING_BLOCKS)));
     public static final Item THATCH = register("thatch", new BlockItem(BarnyardBlocks.THATCH, new FabricItemSettings().group(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
-    public static final Item TRUFFLE = register("truffle", new Item(new FabricItemSettings().group(CreativeModeTab.TAB_FOOD).rarity(Rarity.UNCOMMON)));
-    public static final Item TRUFFLE_STEW = register("truffle_stew", new TruffleStewItem(new FabricItemSettings().group(CreativeModeTab.TAB_FOOD).stacksTo(1).rarity(Rarity.UNCOMMON).food(BarnyardFoods.TRUFFLE_STEW)));
+    public static final Item TRUFFLE = register("truffle", new Item(new FabricItemSettings().group(CreativeModeTab.TAB_FOOD)));
+    public static final Item TRUFFLE_STEW = register("truffle_stew", new TruffleStewItem(new FabricItemSettings().group(CreativeModeTab.TAB_FOOD).stacksTo(1).food(BarnyardFoods.TRUFFLE_STEW)));
 
 
     private static Item register(String id, Item item) {
