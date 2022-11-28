@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#MB",
+    " D "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:red_mushroom"
+    },
+    "M": {
+      "item": "barnyard:truffle"
+    },
+    "B": {
+      "item": "minecraft:brown_mushroom"
+    },
+    "D": {
+      "item": "minecraft:bowl"
+    }
+  },
+  "result": {
+    "item": "barnyard:truffle_stew",
+    "count": 1
+  }
+}

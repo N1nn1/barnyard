@@ -9,6 +9,10 @@
 
   "item.barnyard.truffle": "Truffle",
   "item.barnyard.truffle_stew": "Truffle Stew",
+  "tooltip.food_item": "When Consumed:",
+  "tooltip.truffle_stew.effect_duration": "Haste (4:00)",
+  "tooltip.truffle_stew.effect.mine": "+20% Mining Speed",
+  "tooltip.truffle_stew.effect.attack": "+10% Attack Speed",
 
   "subtitles.barnyard.pig.ambient": "Pig oinks",
   "subtitles.barnyard.pig.hurt": "Pig squeals",
