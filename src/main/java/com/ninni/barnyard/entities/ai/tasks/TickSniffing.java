@@ -1,7 +1,10 @@
 package com.ninni.barnyard.entities.ai.tasks;
 
+import static com.ninni.barnyard.Barnyard.MOD_ID;
+
+import java.util.List;
+
 import com.google.common.collect.ImmutableMap;
-import com.ninni.barnyard.Barnyard;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 
@@ -20,10 +23,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
-
-import static com.ninni.barnyard.Barnyard.MOD_ID;
-
 public class TickSniffing extends Behavior<BarnyardPig> {
     private static final ResourceLocation DIGGING_LOOT = new ResourceLocation(MOD_ID, "entities/pig_digging");
 
@@ -36,25 +35,28 @@ public class TickSniffing extends Behavior<BarnyardPig> {
         return true;
     }
 
+    protected void createParticles(ServerLevel level, BarnyardPig pig) {
+        Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, pig.getBlockStateOn()), pig.getX() + look.x(), pig.getY() + 0.1, pig.getZ() + look.z(), 1, 0.2, 0.1, 0.2, 0);
+    }
+
+    protected void spawnItem(ServerLevel level, BarnyardPig pig) {
+        Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
+        List<ItemStack> items = level.getServer().getLootTables().get(DIGGING_LOOT).getRandomItems(new LootContext.Builder(level).withRandom(level.getRandom()).create(LootContextParamSets.EMPTY));
+        ItemEntity item = new ItemEntity(level, pig.getX() + look.x(), pig.getY() + 0.2, pig.getZ() + look.z(), items.get(0));
+        item.setDefaultPickUpDelay();
+        item.setDeltaMovement(look.multiply(0.3, 0, 0.3).add(0, 0.15, 0));
+        level.addFreshEntity(item);
+    }
+
     @Override
     protected void tick(ServerLevel level, BarnyardPig pig, long l) {
         var memory = pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS);
         if (memory.isPresent()) {
             int time = memory.get();
-            Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
-            if (time > 40 && time < 64) {
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, pig.getBlockStateOn()), pig.getX() + look.x(), pig.getY() + 0.1, pig.getZ() + look.z(), 1, 0.2, 0.1, 0.2, 0);
-            }
-            if (time == 38) {
-
-                List<ItemStack> items = level.getServer().getLootTables().get(DIGGING_LOOT).getRandomItems(new LootContext.Builder(level).withRandom(level.getRandom()).create(LootContextParamSets.EMPTY));
-                ItemEntity item = new ItemEntity(level, pig.getX() + look.x(), pig.getY() + 0.2, pig.getZ() + look.z(), items.get(0));
-                item.setDefaultPickUpDelay();
-                item.setDeltaMovement(look.multiply(0.3, 0, 0.3).add(0, 0.15, 0));
-                level.addFreshEntity(item);
-            }
+            if (time > 40 && time < 64) createParticles(level, pig);
+            if (time == 38) spawnItem(level, pig);
         }
-        Barnyard.LOGGER.info(pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS));
     }
 
     @Override

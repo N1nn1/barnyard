@@ -2,6 +2,7 @@ package com.ninni.barnyard.init;
 
 import com.ninni.barnyard.Barnyard;
 import com.ninni.barnyard.entities.BarnyardPig;
+
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -9,12 +10,19 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements.Type;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class BarnyardEntityTypes {
 
-    public static final EntityType<BarnyardPig> PIG = register("pig", FabricEntityTypeBuilder.createMob().entityFactory(BarnyardPig::new).defaultAttributes(BarnyardPig::createAttributes).dimensions(EntityDimensions.scalable(0.9F, 0.9F)), null);
+    public static final EntityType<BarnyardPig> PIG = register("pig", FabricEntityTypeBuilder.createMob()
+            .entityFactory(BarnyardPig::new)
+            .defaultAttributes(BarnyardPig::createAttributes)
+            .spawnRestriction(Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules)
+            .dimensions(EntityDimensions.scalable(0.9F, 0.9F)), null);
 
     @SuppressWarnings("unchecked")
     private static <T extends Entity> EntityType<T> register(String id, EntityType<T> entityType, int[] spawnEggColors) {
