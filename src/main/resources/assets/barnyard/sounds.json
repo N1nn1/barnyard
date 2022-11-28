@@ -49,6 +49,10 @@
 	},
 	"entity.pig.dash.recharge": {
 		"sounds": [
+			{
+				"name": "barnyard:entity/pig/recharge",
+				"volume": 0.5
+			}
 		],
 		"subtitle": "subtitles.barnyard.pig.dash.recharge"
 	},
