@@ -6,6 +6,8 @@
   "mixins": [
   ],
   "client": [
+    "client.GuiMixin",
+    "client.LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

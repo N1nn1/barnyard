@@ -1,8 +1,5 @@
 package com.ninni.barnyard.entities;
 
-import net.minecraft.world.entity.*;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
@@ -11,7 +8,6 @@ import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
-
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +25,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AnimationState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ItemBasedSteering;
+import net.minecraft.world.entity.ItemSteerable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.Saddleable;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -44,8 +52,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
-public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
+public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, CooldownRideableJumping {
     protected static final ImmutableList<SensorType<? extends Sensor<? super BarnyardPig>>> SENSOR_TYPES = ImmutableList.of(
             SensorType.NEAREST_LIVING_ENTITIES,
             SensorType.NEAREST_PLAYERS,
@@ -86,8 +95,11 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
     private final ItemBasedSteering steering;
+    private int chargingCooldown = 0;
+    protected float playerJumpPendingScale;
     public final AnimationState sniffingAnimationState = new AnimationState();
     public final AnimationState rollingInMudAnimationState = new AnimationState();
 
@@ -113,7 +125,6 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
             vec3 = vec3.multiply(0.0, 1.0, 0.0);
         }
-
         Entity entity = this.getControllingPassenger();
         if (!this.isVehicle() || !(entity instanceof Player)) {
             this.maxUpStep = 0.5f;
@@ -129,27 +140,53 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         this.yHeadRot = this.getYRot();
         this.maxUpStep = 1.0f;
         this.flyingSpeed = this.getSpeed() * 0.1f;
-        if (steering.boosting && steering.boostTime++ > 2) steering.boosting = false;
-
-
-        if (steering.boosting && steering.boostTime <= 3) {
-            this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D), this::isValidTarget).forEach(this::damageRamTarget);
+        if (this.steering.boosting && this.steering.boostTime++ > 2) {
+            this.steering.boosting = false;
+        }
+        float f = this.getSteeringSpeed();
+        boolean flag = this.playerJumpPendingScale > 0.0F && !this.isCharging() && this.onGround;
+        if (flag) {
+            f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
+            this.setDeltaMovement(this.getDeltaMovement().add(this.getLookAngle().multiply(1.0, 0.0, 1.0).normalize().scale((double) (6.44444F) * this.getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) this.getBlockSpeedFactor()).add(0.0, (double) (1.4285f * f) * 1.5F, 0.0)));
+            this.chargingCooldown = 55;
+            this.setCharging(true);
+            this.hasImpulse = false;
+            this.playerJumpPendingScale = 0.0F;
         }
         if (this.isControlledByLocalInstance()) {
-            float f = this.getSteeringSpeed();
             if (steering.boosting && steering.boostTime < 2) {
-                f += f * 1.15f * Mth.sin((float)steering.boostTime / (float)steering.boostTimeTotal * (float)Math.PI);
-                this.setDeltaMovement(this.getDeltaMovement().add(this.getLookAngle().multiply(1.0, 0.0, 1.0).normalize().scale((double)(4.44444F) * this.getAttributeValue(Attributes.MOVEMENT_SPEED) * (double)this.getBlockSpeedFactor()).add(0.0, (double)(1.4285f * f) * 1.5F, 0.0)));
+                f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
             }
             this.setSpeed(f);
             this.travelWithInput(new Vec3(0.0, 0.0, 1.0));
             this.lerpSteps = 0;
         } else {
+            if (this.onGround) {
+                this.playerJumpPendingScale = 0.0F;
+                this.setCharging(false);
+            }
             this.calculateEntityAnimation(this, false);
             this.setDeltaMovement(Vec3.ZERO);
         }
         this.tryCheckInsideBlocks();
 
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.isCharging() && this.chargingCooldown < 55 && (this.onGround || this.isInWater())) {
+            this.setCharging(false);
+        }
+        if (this.chargingCooldown > 0) {
+            --this.chargingCooldown;
+            if (this.chargingCooldown >= 49) {
+                this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D), this::isValidTarget).forEach(this::damageRamTarget);
+            }
+            if (this.chargingCooldown == 0) {
+                this.level.playSound(null, this.blockPosition(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1.0f, 1.0f);
+            }
+        }
     }
 
     private boolean isValidTarget(LivingEntity mob) {
@@ -163,10 +200,10 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
-            mob.hurt(source, (float)getAttributeValue(Attributes.ATTACK_DAMAGE));
+            mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
     }
-    
+
     public void setAngerTarget(LivingEntity mob) {
         if (!Sensor.isEntityAttackableIgnoringLineOfSight(this, mob)) return;
         getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
@@ -175,7 +212,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.getDirectEntity() != null && source.getDirectEntity() instanceof LivingEntity mob) setAngerTarget(mob);
+        if (source.getDirectEntity() != null && source.getDirectEntity() instanceof LivingEntity mob)
+            setAngerTarget(mob);
         return super.hurt(source, amount);
     }
 
@@ -216,10 +254,12 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor) {
+        if (!this.firstTick && CHARGING.equals(entityDataAccessor)) {
+            this.chargingCooldown = this.chargingCooldown == 0 ? 55 : this.chargingCooldown;
+        }
         if (DATA_BOOST_TIME.equals(entityDataAccessor) && level.isClientSide) {
             steering.onSynced();
         }
-
         if (DATA_POSE.equals(entityDataAccessor)) {
             if (getPose() == Pose.SNIFFING) {
                 sniffingAnimationState.start(tickCount);
@@ -252,10 +292,11 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        entityData.define(TUSK, false);
-        entityData.define(DATA_SADDLE_ID, false);
-        entityData.define(MUDDY, false);
-        entityData.define(DATA_BOOST_TIME, 0);
+        this.entityData.define(TUSK, false);
+        this.entityData.define(DATA_SADDLE_ID, false);
+        this.entityData.define(MUDDY, false);
+        this.entityData.define(CHARGING, false);
+        this.entityData.define(DATA_BOOST_TIME, 0);
     }
 
     @Override
@@ -272,6 +313,14 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         setHasTusk(compoundTag.getBoolean("Tusk"));
         setMuddy(compoundTag.getBoolean("Muddy"));
         steering.readAdditionalSaveData(compoundTag);
+    }
+
+    public boolean isCharging()  {
+        return this.entityData.get(CHARGING);
+    }
+
+    public void setCharging(boolean charging) {
+        this.entityData.set(CHARGING, charging);
     }
 
     public boolean isMuddy() {
@@ -291,7 +340,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+    public SpawnGroupData finalizeSpawn (ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag){
         if (serverLevelAccessor.getRandom().nextFloat() < 0.2f) {
             setHasTusk(true);
         }
@@ -312,7 +361,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    protected Brain<?> makeBrain(Dynamic<?> dynamic) {
+    protected Brain<?> makeBrain(Dynamic <?> dynamic) {
         return BarnyardPigAi.makeBrain(brainProvider().makeBrain(dynamic));
     }
 
@@ -325,7 +374,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     @Override
     protected void customServerAiStep() {
         level.getProfiler().push("barnyardPigBrain");
-        getBrain().tick((ServerLevel)level, this);
+        getBrain().tick((ServerLevel) level, this);
         level.getProfiler().pop();
         level.getProfiler().push("barnyardPigActivityUpdate");
         BarnyardPigAi.updateActivity(this);
@@ -341,7 +390,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
+    public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob){
         return BarnyardEntityTypes.PIG.create(serverLevel);
     }
 
@@ -352,7 +401,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
+    protected SoundEvent getHurtSound(DamageSource damageSource){
         return BarnyardSounds.PIG_HURT;
     }
 
@@ -365,7 +414,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         return isMuddy() ? BarnyardSounds.PIG_STEP_MUDDY : BarnyardSounds.PIG_STEP;
     }
 
-    protected void playStepSound(BlockPos blockPos, BlockState blockState) {
+    protected void playStepSound(BlockPos blockPos, BlockState blockState){
         playSound(getStepSound(), 0.15F, 1.0F);
     }
 
@@ -377,7 +426,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
 
     }
 
-    public void positionRider(Entity entity) {
+    public void positionRider(Entity entity){
         super.positionRider(entity);
         if (hasPassenger(entity)) {
             float f = Mth.cos(yBodyRot * 0.0175F);
@@ -392,7 +441,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    public void equipSaddle(@Nullable SoundSource soundSource) {
+    public void equipSaddle(@Nullable SoundSource soundSource){
         steering.setSaddle(true);
         if (soundSource != null) {
             level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1.0f);
@@ -411,13 +460,44 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     }
 
     @Override
-    public void travelWithInput(Vec3 vec3) {
+    public void travelWithInput(Vec3 vec3){
         super.travel(vec3);
     }
 
+   @Override
+   public float getSteeringSpeed() {
+       return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.55f;
+   }
+
     @Override
-    public float getSteeringSpeed() {
-        return (float)getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.225f;
+    public void onPlayerJump(int i) {
+        if (!this.isSaddled() || this.chargingCooldown > 0 || !this.isOnGround()) {
+            return;
+        }
+        if (i < 0) {
+            i = 0;
+        }
+        this.playerJumpPendingScale = i >= 90 ? 1.0f : 0.4f + 0.4f * (float) i / 90.0f;
+    }
+
+    @Override
+    public boolean canJump() {
+        return this.isSaddled();
+    }
+
+    @Override
+    public void handleStartJump(int i) {
+        this.playSound(BarnyardSounds.PIG_DASH, 1.0F, 1.0F);
+        this.setCharging(true);
+    }
+
+    @Override
+    public void handleStopJump() {
+    }
+
+    @Override
+    public int getJumpCooldown() {
+        return this.chargingCooldown;
     }
 
 }
