@@ -84,6 +84,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     );
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
     private final ItemBasedSteering steering;
     public final AnimationState sniffingAnimationState = new AnimationState();
@@ -241,6 +242,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
         super.defineSynchedData();
         this.entityData.define(TUSK, false);
         this.entityData.define(DATA_SADDLE_ID, false);
+        this.entityData.define(MUDDY, false);
         this.entityData.define(DATA_BOOST_TIME, 0);
     }
 
@@ -248,6 +250,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     public void addAdditionalSaveData(CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
         compoundTag.putBoolean("Tusk", this.hasTusk());
+        compoundTag.putBoolean("Muddy", this.isMuddy());
         this.steering.addAdditionalSaveData(compoundTag);
     }
 
@@ -255,7 +258,16 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     public void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
         this.setHasTusk(compoundTag.getBoolean("Tusk"));
+        this.setMuddy(compoundTag.getBoolean("Muddy"));
         this.steering.readAdditionalSaveData(compoundTag);
+    }
+
+    public boolean isMuddy() {
+        return this.entityData.get(MUDDY);
+    }
+
+    public void setMuddy(boolean muddy) {
+        this.entityData.set(MUDDY, muddy);
     }
 
     public boolean hasTusk() {

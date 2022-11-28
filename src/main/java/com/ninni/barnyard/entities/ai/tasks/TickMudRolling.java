@@ -28,6 +28,7 @@ public class TickMudRolling extends Behavior<BarnyardPig> {
     @Override
     protected void stop(ServerLevel serverLevel, BarnyardPig livingEntity, long l) {
         livingEntity.setPose(Pose.STANDING);
+        livingEntity.setMuddy(true);
         livingEntity.getBrain().setMemory(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, 6000);
         livingEntity.getBrain().eraseMemory(BarnyardMemoryModules.NEAREST_MUD);
         livingEntity.getBrain().eraseMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS);

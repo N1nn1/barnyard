@@ -27,6 +27,9 @@ public class BarnyardPigRenderer extends MobRenderer<BarnyardPig, BarnyardPigMod
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(BarnyardPig entity) {
+        if (entity.isMuddy()) {
+            return entity.hasTusk() ? MUDDY_TUSKED_PIG_LOCATION : MUDDY_PIG_LOCATION;
+        }
         return entity.hasTusk() ? TUSKED_PIG_LOCATION : PIG_LOCATION;
     }
 }
