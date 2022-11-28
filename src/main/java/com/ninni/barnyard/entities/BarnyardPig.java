@@ -145,7 +145,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         if (chargingCooldown > 0) {
             chargingCooldown--;
             if (chargingCooldown >= 49) {
-                level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(2), this::isValidTarget).forEach(this::damageRamTarget);
+                level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(1.2), this::isValidTarget).forEach(this::damageRamTarget);
             }
             if (chargingCooldown == 0) {
                 level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1, 1);

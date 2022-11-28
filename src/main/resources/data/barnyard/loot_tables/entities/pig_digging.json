@@ -40,20 +40,6 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 3,
-          "name": "minecraft:wheat_seeds",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 3,
-                "max": 8
-              }
-            }
-          ]
-        },
-        {
-          "type": "minecraft:item",
           "weight": 2,
           "name": "minecraft:iron_nugget",
           "functions": [
