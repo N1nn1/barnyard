@@ -14,6 +14,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.level.block.Blocks;
 
 public class StartSniffing extends Behavior<BarnyardPig> {
     public StartSniffing() {
@@ -22,7 +23,7 @@ public class StartSniffing extends Behavior<BarnyardPig> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel level, BarnyardPig pig) {
-        return pig.getBlockStateOn().is(BlockTags.DIRT) && super.checkExtraStartConditions(level, pig);
+        return !pig.getBlockStateOn().is(Blocks.MUD) && pig.getBlockStateOn().is(BlockTags.DIRT) && super.checkExtraStartConditions(level, pig);
     }
 
     @Override

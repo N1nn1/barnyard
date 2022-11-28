@@ -51,7 +51,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             SensorType.NEAREST_ITEMS,
             SensorType.NEAREST_ADULT,
             SensorType.HURT_BY,
-            BarnyardSensorTypes.PIG_TEMPTATIONS
+            BarnyardSensorTypes.PIG_TEMPTATIONS,
+            BarnyardSensorTypes.NEAREST_MUD_SENSOR
     );
     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(
             MemoryModuleType.LOOK_TARGET,
@@ -76,7 +77,10 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
             MemoryModuleType.IS_PANICKING,
             MemoryModuleType.IS_SNIFFING,
             MemoryModuleType.SNIFF_COOLDOWN,
-            BarnyardMemoryModules.PIG_SNIFFING_TICKS
+            BarnyardMemoryModules.PIG_SNIFFING_TICKS,
+            BarnyardMemoryModules.NEAREST_MUD,
+            BarnyardMemoryModules.MUD_ROLLING_TICKS,
+            BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS
     );
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
@@ -93,6 +97,10 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable {
     @Override
     public void travel(Vec3 vec3) {
         if (!this.isAlive()) return;
+        if (this.getBrain().getMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS).isPresent() && this.isOnGround()) {
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
+            vec3 = vec3.multiply(0.0, 1.0, 0.0);
+        }
 
         Entity entity = this.getControllingPassenger();
         if (!this.isVehicle() || !(entity instanceof Player)) {

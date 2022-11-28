@@ -1,6 +1,7 @@
 package com.ninni.barnyard;
 
 
+import com.ninni.barnyard.init.BarnyardActivities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +40,8 @@ public class Barnyard implements ModInitializer {
 				BarnyardItems.class,
 				BarnyardBlocks.class,
 				BarnyardEntityTypes.class,
-				BarnyardSensorTypes.class
+				BarnyardSensorTypes.class,
+				BarnyardActivities.class
 		);
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);

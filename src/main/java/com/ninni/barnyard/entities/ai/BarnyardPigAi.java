@@ -8,8 +8,11 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
+import com.ninni.barnyard.entities.ai.tasks.MudRolling;
 import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
+import com.ninni.barnyard.entities.ai.tasks.TickMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.TickSniffing;
+import com.ninni.barnyard.init.BarnyardActivities;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardTags;
@@ -57,14 +60,23 @@ public class BarnyardPigAi {
         initIdleActivity(brain);
         initFightActivity(brain);
         initSniffingActivity(brain);
+        initMudRollingActivity(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.useDefaultActivity();
         return brain;
     }
 
+    private static void initMudRollingActivity(Brain<BarnyardPig> brain) {
+        brain.addActivityWithConditions(BarnyardActivities.MUD_ROLLING, ImmutableList.of(
+                Pair.of(1, new TickMudRolling())
+        ), ImmutableSet.of(Pair.of(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT)));
+    }
+
     private static void initSniffingActivity(Brain<BarnyardPig> brain) {
-        brain.addActivityAndRemoveMemoryWhenStopped(Activity.SNIFF, 5, ImmutableList.of(new TickSniffing(SNIFFING_DURATION)), MemoryModuleType.IS_SNIFFING);
+        brain.addActivityAndRemoveMemoryWhenStopped(Activity.SNIFF, 5, ImmutableList.of(
+                new TickSniffing(SNIFFING_DURATION)
+        ), MemoryModuleType.IS_SNIFFING);
     }
 
     private static void initCoreActivity(Brain<BarnyardPig> brain) {
@@ -77,7 +89,8 @@ public class BarnyardPigAi {
                 new MoveToTargetSink(),
                 new StopBeingAngryIfTargetDead<>(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
-                new CountDownCooldownTicks(BarnyardMemoryModules.PIG_SNIFFING_TICKS)
+                new CountDownCooldownTicks(BarnyardMemoryModules.PIG_SNIFFING_TICKS),
+                new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS)
         ));
     }
 
@@ -89,13 +102,14 @@ public class BarnyardPigAi {
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
                 Pair.of(5, new RunIf<>((mob) -> !mob.isBaby(), new StartSniffing())),
-                Pair.of(6, new RunOne<>(ImmutableMap.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT),
+                Pair.of(6, new MudRolling()),
+                Pair.of(7, new RunOne<>(ImmutableMap.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT, BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_ABSENT),
                         ImmutableList.of(
                                 Pair.of(new RandomStroll(1), 2),
                                 Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
                                 Pair.of(new DoNothing(30, 60), 1)
                         )))),
-                ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT)));
+                ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_ABSENT)));
     }
 
     private static void initFightActivity(Brain<BarnyardPig> brain) {
@@ -117,7 +131,7 @@ public class BarnyardPigAi {
     }
 
     public static void updateActivity(BarnyardPig pig) {
-        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.FIGHT, Activity.IDLE, Activity.SNIFF));
+        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(BarnyardActivities.MUD_ROLLING, Activity.FIGHT, Activity.IDLE, Activity.SNIFF));
     }
 
     public static Ingredient getTemptations() {
