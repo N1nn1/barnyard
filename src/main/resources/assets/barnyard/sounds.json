@@ -128,8 +128,7 @@
 	"entity.pig.saddle_unequip": {
 		"sounds": [
 			{
-				"name": "entity.pig.saddle",
-				"type": "event"
+				"name": "barnyard:entity/pig/saddle_unequip"
 			}
 		],
 		"subtitle": "subtitles.barnyard.pig.saddle_unequip"
