@@ -1,15 +1,11 @@
 package com.ninni.barnyard.entities;
 
+import com.ninni.barnyard.init.*;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
-import com.ninni.barnyard.init.BarnyardEntityTypes;
-import com.ninni.barnyard.init.BarnyardMemoryModules;
-import com.ninni.barnyard.init.BarnyardSensorTypes;
-import com.ninni.barnyard.init.BarnyardSounds;
-import com.ninni.barnyard.init.BarnyardTags;
 
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
@@ -145,6 +141,16 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
                 level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1, 1);
             }
         }
+    }
+
+    @Override
+    public void aiStep() {
+        if (this.isMuddy() && this.random.nextInt(5) == 0) {
+            for (int i = 0; i < this.random.nextInt(1) + 1; ++i) {
+                this.level.addParticle(BarnyardParticleTypes.MUD, this.getRandomX(0.8), this.getY() + 0.5F, this.getRandomZ(0.8), 0.0, this.random.nextFloat() * 5, 0.0);
+            }
+        }
+        super.aiStep();
     }
 
     private boolean isValidTarget(LivingEntity mob) {

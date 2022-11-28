@@ -1,17 +1,12 @@
 package com.ninni.barnyard;
 
 
+import com.ninni.barnyard.init.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.reflect.Reflection;
 import com.ninni.barnyard.entities.BarnyardPig;
-import com.ninni.barnyard.init.BarnyardActivities;
-import com.ninni.barnyard.init.BarnyardBlocks;
-import com.ninni.barnyard.init.BarnyardEntityTypes;
-import com.ninni.barnyard.init.BarnyardItems;
-import com.ninni.barnyard.init.BarnyardSensorTypes;
-import com.ninni.barnyard.init.BarnyardSounds;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -38,6 +33,7 @@ public class Barnyard implements ModInitializer {
 				BarnyardSounds.class,
 				BarnyardItems.class,
 				BarnyardBlocks.class,
+				BarnyardParticleTypes.class,
 				BarnyardEntityTypes.class,
 				BarnyardSensorTypes.class,
 				BarnyardActivities.class
