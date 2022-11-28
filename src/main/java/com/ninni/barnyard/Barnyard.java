@@ -2,6 +2,8 @@ package com.ninni.barnyard;
 
 
 import com.ninni.barnyard.init.*;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +20,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class Barnyard implements ModInitializer {
-
 	public static final String MOD_ID = "barnyard";
 	public static final Logger LOGGER = LogManager.getLogger();
+	public static final CreativeModeTab BARNYARD_TAB = FabricItemGroupBuilder.create(new ResourceLocation(MOD_ID, MOD_ID)).icon(() -> new ItemStack(BarnyardItems.TRUFFLE)).build();
 
 	public static ResourceLocation id(String name) {
 		return new ResourceLocation(MOD_ID, name);

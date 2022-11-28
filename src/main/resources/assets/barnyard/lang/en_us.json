@@ -1,12 +1,15 @@
 {
 	"mod.barnyard.name": "Barnyard",
 	"mod.barnyard.contact.discord": "Discord",
+	"itemGroup.barnyard.barnyard": "Barnyard",
 
-	"entity.barnyard.pig": "Pig",
 
 	"block.barnyard.thatch_block": "Thatch Block",
 	"block.barnyard.thatch": "Thatch",
 
+	"entity.barnyard.pig": "Pig",
+
+	"item.barnyard.barnyard_pig_spawn_egg": "Pig Spawn Egg",
 	"item.barnyard.truffle": "Truffle",
 	"item.barnyard.truffle_stew": "Truffle Stew",
 
