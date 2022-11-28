@@ -177,8 +177,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             double e = (1 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
-            mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5F);
-            level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RAM, SoundSource.PLAYERS, 1, 1);
+            if (mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5F)) {
+                level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RAM, SoundSource.PLAYERS, 1, 1);
+            }
         }
     }
 
@@ -377,8 +378,13 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob){
-        return BarnyardEntityTypes.PIG.create(serverLevel);
+    public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob spouse) {
+        BarnyardPig child = BarnyardEntityTypes.PIG.create(level);
+        float chance = 0.1F;
+        if (hasTusk()) chance += 0.4F;
+        if (spouse instanceof BarnyardPig mob && mob.hasTusk()) chance += 0.4F;
+        if (random.nextFloat() < chance) child.setHasTusk(true);
+        return child;
     }
 
     @Override
@@ -403,7 +409,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     }
 
     protected SoundEvent getStepSound() {
-        return isMuddy() ? BarnyardSounds.PIG_STEP_MUDDY : BarnyardSounds.PIG_STEP;
+        return isMuddy() || getFeetBlockState().is(Blocks.MUD) ? BarnyardSounds.PIG_STEP_MUDDY : BarnyardSounds.PIG_STEP;
     }
 
     protected void playStepSound(BlockPos blockPos, BlockState blockState){

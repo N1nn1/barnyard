@@ -1,28 +1,30 @@
 {
-  "mod.barnyard.name": "Barnyard",
-  "mod.barnyard.contact.discord": "Discord",
+	"mod.barnyard.name": "Barnyard",
+	"mod.barnyard.contact.discord": "Discord",
 
-  "entity.barnyard.pig": "Pig",
+	"entity.barnyard.pig": "Pig",
 
-  "block.barnyard.thatch_block": "Thatch Block",
-  "block.barnyard.thatch": "Thatch",
+	"block.barnyard.thatch_block": "Thatch Block",
+	"block.barnyard.thatch": "Thatch",
 
-  "item.barnyard.truffle": "Truffle",
-  "item.barnyard.truffle_stew": "Truffle Stew",
-  "tooltip.food_item": "When Consumed:",
-  "tooltip.truffle_stew.effect_duration": "Haste (4:00)",
-  "tooltip.truffle_stew.effect.mine": "+20% Mining Speed",
-  "tooltip.truffle_stew.effect.attack": "+10% Attack Speed",
+	"item.barnyard.truffle": "Truffle",
+	"item.barnyard.truffle_stew": "Truffle Stew",
 
-  "subtitles.barnyard.pig.ambient": "Pig oinks",
-  "subtitles.barnyard.pig.hurt": "Pig squeals",
-  "subtitles.barnyard.pig.death": "Pig dies",
-  "subtitles.barnyard.pig.step": "Pig steps",
-  "subtitles.barnyard.pig.eat": "Pig munches",
-  "subtitles.barnyard.pig.dash": "Pig charges",
-  "subtitles.barnyard.pig.dash.recharge": "Pig readies",
-  "subtitles.barnyard.pig.dash.ram": "Pig hits",
-  "subtitles.barnyard.pig.sniff": "Pig sniffs",
-  "subtitles.barnyard.pig.saddle_equip": "Saddle equips",
-  "subtitles.barnyard.pig.saddle_unequip": "Saddle comes off"
+	"tooltip.food_item": "When Consumed:",
+	"tooltip.truffle_stew.effect_duration": "Haste (4:00)",
+	"tooltip.truffle_stew.effect.mine": "+20% Mining Speed",
+	"tooltip.truffle_stew.effect.attack": "+10% Attack Speed",
+	
+	"subtitles.barnyard.pig.ambient": "Pig oinks",
+	"subtitles.barnyard.pig.hurt": "Pig hurts",
+	"subtitles.barnyard.pig.death": "Pig dies",
+	"subtitles.barnyard.pig.step": "Pig steps",
+	"subtitles.barnyard.pig.eat": "Pig munches",
+	"subtitles.barnyard.pig.dash": "Pig charges",
+	"subtitles.barnyard.pig.dash.recharge": "Pig readies",
+	"subtitles.barnyard.pig.dash.ram": "Pig hits",
+	"subtitles.barnyard.pig.sniff": "Pig sniffs",
+	"subtitles.barnyard.pig.mud_roll": "Pig rolls in mud",
+	"subtitles.barnyard.pig.saddle_equip": "Saddle equips",
+	"subtitles.barnyard.pig.saddle_unequip": "Saddle comes off"
 }

@@ -58,6 +58,18 @@
 	},
 	"entity.pig.dash.ram": {
 		"sounds": [
+			{
+				"name": "barnyard:entity/pig/ram1"
+			},
+			{
+				"name": "barnyard:entity/pig/ram2"
+			},
+			{
+				"name": "barnyard:entity/pig/ram3"
+			},
+			{
+				"name": "barnyard:entity/pig/ram4"
+			}
 		],
 		"subtitle": "subtitles.barnyard.pig.dash.ram"
 	},
