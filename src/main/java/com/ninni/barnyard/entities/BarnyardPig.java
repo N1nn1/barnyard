@@ -223,7 +223,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     protected void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
-        if (isFood(stack)) playSound(getEatingSound(stack));
+        if (isFood(stack)) playSound(getEatingSound(stack), 1, getVoicePitch());
         super.usePlayerItem(player, hand, stack);
     }
 
