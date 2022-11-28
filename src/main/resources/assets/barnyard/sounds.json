@@ -28,18 +28,21 @@
 				"name": "barnyard:entity/pig/eat3"
 			}
 		],
-		"subtitle": "subtitles.barnyard.pig.ambient"
+		"subtitle": "subtitles.barnyard.pig.eat"
 	},
 	"entity.pig.dash": {
 		"sounds": [
 			{
-				"name": "barnyard:entity/pig/dash1"
+				"name": "barnyard:entity/pig/dash1",
+				"volume": 2
 			},
 			{
-				"name": "barnyard:entity/pig/dash2"
+				"name": "barnyard:entity/pig/dash2",
+				"volume": 2
 			},
 			{
-				"name": "barnyard:entity/pig/dash3"
+				"name": "barnyard:entity/pig/dash3",
+				"volume": 2
 			}
 		],
 		"subtitle": "subtitles.barnyard.pig.dash"
