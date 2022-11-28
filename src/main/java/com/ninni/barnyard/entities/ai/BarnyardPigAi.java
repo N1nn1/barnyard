@@ -67,9 +67,9 @@ public class BarnyardPigAi {
     }
 
     private static void initMudRollingActivity(Brain<BarnyardPig> brain) {
-        brain.addActivityWithConditions(BarnyardActivities.MUD_ROLLING, ImmutableList.of(
-                Pair.of(1, new TickMudRolling())
-        ), ImmutableSet.of(Pair.of(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT)));
+        brain.addActivityAndRemoveMemoryWhenStopped(BarnyardActivities.MUD_ROLLING, 5, ImmutableList.of(
+                new TickMudRolling()
+        ), BarnyardMemoryModules.MUD_ROLLING_TICKS);
     }
 
     private static void initSniffingActivity(Brain<BarnyardPig> brain) {
@@ -88,6 +88,7 @@ public class BarnyardPigAi {
                 new StopBeingAngryIfTargetDead<>(),
                 new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS),
                 new CountDownCooldownTicks(BarnyardMemoryModules.PIG_SNIFFING_TICKS),
+                new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_TICKS),
                 new CountDownCooldownTicks(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS)
         ));
     }

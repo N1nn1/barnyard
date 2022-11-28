@@ -23,7 +23,7 @@ public class StartSniffing extends Behavior<BarnyardPig> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel level, BarnyardPig pig) {
-        return !pig.getBlockStateOn().is(Blocks.MUD) && pig.getBlockStateOn().is(BlockTags.DIRT) && super.checkExtraStartConditions(level, pig);
+        return !pig.getBlockStateOn().is(Blocks.MUD) && pig.getBlockStateOn().is(BlockTags.DIRT);
     }
 
     @Override
