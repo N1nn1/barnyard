@@ -19,16 +19,13 @@
 	"entity.pig.dash": {
 		"sounds": [
 			{
-				"name": "barnyard:entity/pig/ambient1"
+				"name": "barnyard:entity/pig/dash1"
 			},
 			{
-				"name": "barnyard:entity/pig/ambient2"
+				"name": "barnyard:entity/pig/dash2"
 			},
 			{
-				"name": "barnyard:entity/pig/ambient3"
-			},
-			{
-				"name": "barnyard:entity/pig/ambient4"
+				"name": "barnyard:entity/pig/dash3"
 			}
 		],
 		"subtitle": "subtitles.barnyard.pig.dash"
@@ -70,6 +67,26 @@
 			{
 				"name": "entity.pig.step",
 				"type": "event"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.step"
+	},
+	"entity.pig.step.muddy": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/step_muddy1"
+			},
+			{
+				"name": "barnyard:entity/pig/step_muddy2"
+			},
+			{
+				"name": "barnyard:entity/pig/step_muddy3"
+			},
+			{
+				"name": "barnyard:entity/pig/step_muddy4"
+			},
+			{
+				"name": "barnyard:entity/pig/step_muddy5"
 			}
 		],
 		"subtitle": "subtitles.barnyard.pig.step"

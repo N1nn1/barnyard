@@ -15,6 +15,7 @@ public interface BarnyardSounds {
     SoundEvent PIG_DEATH = register("entity.pig.death");
     SoundEvent PIG_HURT = register("entity.pig.hurt");
     SoundEvent PIG_STEP = register("entity.pig.step");
+    SoundEvent PIG_STEP_MUDDY = register("entity.pig.step.muddy");
     SoundEvent PIG_SNIFF = register("entity.pig.sniff");
     SoundEvent PIG_SADDLE_EQUIP = register("entity.pig.saddle_equip");
     SoundEvent PIG_SADDLE_UNEQUIP = register("entity.pig.saddle_unequip");
