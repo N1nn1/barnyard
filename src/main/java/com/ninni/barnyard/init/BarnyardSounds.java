@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.SoundType;
 public interface BarnyardSounds {
 
     SoundEvent PIG_AMBIENT = register("entity.pig.ambient");
+    SoundEvent PIG_EAT = register("entity.pig.eat");
     SoundEvent PIG_DASH = register("entity.pig.dash");
     SoundEvent PIG_DASH_RECHARGE = register("entity.pig.dash.recharge");
     SoundEvent PIG_DASH_RAM = register("entity.pig.dash.ram");

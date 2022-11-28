@@ -22,19 +22,19 @@ public class StartSniffing extends Behavior<BarnyardPig> {
     }
 
     @Override
-    protected boolean checkExtraStartConditions(ServerLevel level, BarnyardPig pig) {
-        return !pig.getBlockStateOn().is(Blocks.MUD) && pig.getBlockStateOn().is(BlockTags.DIRT);
+    protected boolean checkExtraStartConditions(ServerLevel level, BarnyardPig mob) {
+        return !mob.getBlockStateOn().is(Blocks.MUD) && mob.getBlockStateOn().is(BlockTags.DIRT);
     }
 
     @Override
-    protected void start(ServerLevel level, BarnyardPig pig, long l) {
-        Brain<BarnyardPig> brain = pig.getBrain();
+    protected void start(ServerLevel level, BarnyardPig mob, long l) {
+        Brain<BarnyardPig> brain = mob.getBrain();
         
         brain.setMemory(MemoryModuleType.IS_SNIFFING, Unit.INSTANCE);
         brain.setMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS, BarnyardPigAi.SNIFFING_DURATION);
         brain.eraseMemory(MemoryModuleType.WALK_TARGET);
 
-        pig.setPose(Pose.SNIFFING);
-        pig.playSound(BarnyardSounds.PIG_SNIFF, 1, 1);
+        mob.setPose(Pose.SNIFFING);
+        mob.playSound(BarnyardSounds.PIG_SNIFF, 1, 1);
     }
 }

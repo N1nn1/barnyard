@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 
 import net.minecraft.core.particles.BlockParticleOption;
@@ -31,37 +32,37 @@ public class TickSniffing extends Behavior<BarnyardPig> {
     }
 
     @Override
-    protected boolean canStillUse(ServerLevel level, BarnyardPig pig, long l) {
+    protected boolean canStillUse(ServerLevel level, BarnyardPig mob, long l) {
         return true;
     }
 
-    protected void createParticles(ServerLevel level, BarnyardPig pig) {
-        Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
-        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, pig.getBlockStateOn()), pig.getX() + look.x(), pig.getY() + 0.1, pig.getZ() + look.z(), 1, 0.2, 0.1, 0.2, 0);
+    protected void createParticles(ServerLevel level, BarnyardPig mob) {
+        Vec3 look = mob.getLookAngle().multiply(0.6, 0, 0.6);
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, mob.getBlockStateOn()), mob.getX() + look.x(), mob.getY() + 0.1, mob.getZ() + look.z(), 1, 0.2, 0.1, 0.2, 0);
     }
 
-    protected void spawnItem(ServerLevel level, BarnyardPig pig) {
-        Vec3 look = pig.getLookAngle().multiply(0.6, 0, 0.6);
+    protected void spawnItem(ServerLevel level, BarnyardPig mob) {
+        Vec3 look = mob.getLookAngle().multiply(0.6, 0, 0.6);
         List<ItemStack> items = level.getServer().getLootTables().get(DIGGING_LOOT).getRandomItems(new LootContext.Builder(level).withRandom(level.getRandom()).create(LootContextParamSets.EMPTY));
-        ItemEntity item = new ItemEntity(level, pig.getX() + look.x(), pig.getY() + 0.2, pig.getZ() + look.z(), items.get(0));
+        ItemEntity item = new ItemEntity(level, mob.getX() + look.x(), mob.getY() + 0.2, mob.getZ() + look.z(), items.get(0));
         item.setDefaultPickUpDelay();
         item.setDeltaMovement(look.multiply(0.3, 0, 0.3).add(0, 0.15, 0));
         level.addFreshEntity(item);
     }
 
     @Override
-    protected void tick(ServerLevel level, BarnyardPig pig, long l) {
-        pig.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS).ifPresent((time) -> {
-            if (time > 40 && time < 64) createParticles(level, pig);
-            if (time == 38) spawnItem(level, pig);
+    protected void tick(ServerLevel level, BarnyardPig mob, long l) {
+        mob.getBrain().getMemory(BarnyardMemoryModules.PIG_SNIFFING_TICKS).ifPresent((time) -> {
+            if (time > 40 && time < 64) createParticles(level, mob);
+            if (time == 38) spawnItem(level, mob);
         });
     }
 
     @Override
-    protected void stop(ServerLevel level, BarnyardPig pig, long l) {
-        pig.setPose(Pose.STANDING);
-        pig.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
-        pig.getBrain().eraseMemory(MemoryModuleType.IS_SNIFFING);
-        pig.getBrain().setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, 6000L);
+    protected void stop(ServerLevel level, BarnyardPig mob, long l) {
+        mob.setPose(Pose.STANDING);
+        mob.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
+        mob.getBrain().eraseMemory(MemoryModuleType.IS_SNIFFING);
+        mob.getBrain().setMemoryWithExpiry(MemoryModuleType.SNIFF_COOLDOWN, Unit.INSTANCE, BarnyardPigAi.SNIFFING_COOLDOWN.sample(mob.getRandom()));
     }
 }

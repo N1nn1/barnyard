@@ -16,6 +16,20 @@
 		],
 		"subtitle": "subtitles.barnyard.pig.ambient"
 	},
+	"entity.pig.eat": {
+		"sounds": [
+			{
+				"name": "barnyard:entity/pig/eat1"
+			},
+			{
+				"name": "barnyard:entity/pig/eat2"
+			},
+			{
+				"name": "barnyard:entity/pig/eat3"
+			}
+		],
+		"subtitle": "subtitles.barnyard.pig.ambient"
+	},
 	"entity.pig.dash": {
 		"sounds": [
 			{

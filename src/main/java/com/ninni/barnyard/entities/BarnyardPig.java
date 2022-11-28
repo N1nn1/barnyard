@@ -1,5 +1,7 @@
 package com.ninni.barnyard.entities;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
@@ -8,6 +10,7 @@ import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
+
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -41,7 +44,6 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.Animal;
@@ -52,7 +54,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, CooldownRideableJumping {
     protected static final ImmutableList<SensorType<? extends Sensor<? super BarnyardPig>>> SENSOR_TYPES = ImmutableList.of(
@@ -111,49 +112,37 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         steering = new ItemBasedSteering(entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
     }
 
-    public static boolean canPerformIdleActivies(BarnyardPig pig) {
-        Brain<BarnyardPig> brain = pig.getBrain();
-        if (pig.isBaby()) return false;
-        if (pig.isVehicle()) return false;
-        if (pig.isInLove()) return false;
-        if (brain.checkMemory(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT)) return false;
-        if (brain.checkMemory(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_PRESENT)) return false;
-        return !brain.checkMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS, MemoryStatus.VALUE_PRESENT);
-    }
-
     @Override
-    public void travel(Vec3 vec3) {
-        if (!this.isAlive()) return;
-        if (this.getBrain().getMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS).isPresent() && this.isOnGround()) {
-            this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
-            vec3 = vec3.multiply(0.0, 1.0, 0.0);
+    public void travel(Vec3 input) {
+        if (!isAlive()) return;
+        if (!hasPose(Pose.STANDING) && isOnGround()) {
+            setDeltaMovement(getDeltaMovement().multiply(0.0, 1.0, 0.0));
+            input = input.multiply(0.0, 1.0, 0.0);
         }
-        float f = this.getSteeringSpeed();
-        boolean flag = this.playerJumpPendingScale > 0.0F && !this.isCharging() && this.onGround;
+        float f = getSteeringSpeed();
+        boolean flag = playerJumpPendingScale > 0.0F && !isCharging() && onGround;
         if (flag) {
             f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
-            this.setDeltaMovement(this.getDeltaMovement().add(this.getLookAngle().multiply(1.0, 0.0, 1.0).normalize().scale((double) (6.44444F) * this.getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) this.getBlockSpeedFactor()).add(0.0, (double) (1.4285f * f) * 1.5F, 0.0)));
-            this.chargingCooldown = 55;
-            this.setCharging(true);
-            this.hasImpulse = false;
-            this.playerJumpPendingScale = 0.0F;
+            setDeltaMovement(getDeltaMovement().add(getLookAngle().multiply(1.0, 0.0, 1.0).normalize().scale((double) (6.44444F) * getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) getBlockSpeedFactor()).add(0.0, (double) (1.4285f * f) * 1.5F, 0.0)));
+            chargingCooldown = 55;
+            setCharging(true);
+            hasImpulse = false;
+            playerJumpPendingScale = 0.0F;
         }
-        this.travel(this, this.steering, vec3);
+        travel(this, steering, input);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (this.isCharging() && this.chargingCooldown < 55 && (this.onGround || this.isInWater())) {
-            this.setCharging(false);
-        }
-        if (this.chargingCooldown > 0) {
-            --this.chargingCooldown;
-            if (this.chargingCooldown >= 49) {
-                this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D), this::isValidTarget).forEach(this::damageRamTarget);
+        if (isCharging() && chargingCooldown < 55 && (onGround || isInWater())) setCharging(false);
+        if (chargingCooldown > 0) {
+            chargingCooldown--;
+            if (chargingCooldown >= 49) {
+                level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(2), this::isValidTarget).forEach(this::damageRamTarget);
             }
-            if (this.chargingCooldown == 0) {
-                this.level.playSound(null, this.blockPosition(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1.0f, 1.0f);
+            if (chargingCooldown == 0) {
+                level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1, 1);
             }
         }
     }
@@ -164,12 +153,13 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     private void damageRamTarget(LivingEntity mob) {
         if (getControllingPassenger() != null && getControllingPassenger() instanceof LivingEntity passenger) {
-            Vec3 vec33 = mob.position().subtract(position().add(0.0, 1.6, 0.0)).normalize();
-            double d = 0.25 * (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-            double e = (1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            Vec3 vec33 = mob.position().subtract(position().add(0, 1.6, 0)).normalize();
+            double d = 0.25 * (1 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            double e = (1 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
             mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5F);
+            level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RAM, SoundSource.PLAYERS, 1, 1);
         }
     }
 
@@ -189,7 +179,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        InteractionResult interactionResult = super.mobInteract(player, hand);
+        InteractionResult result = super.mobInteract(player, hand);
 
         if (isSaddled()) {
             if (stack.is(ConventionalItemTags.SHEARS)) {
@@ -199,7 +189,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
                 playSound(BarnyardSounds.PIG_SADDLE_UNEQUIP, 1, 1);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else if (isFood(stack)) {
-
+                return result;
             } else if (!isVehicle() && !player.isSecondaryUseActive()) {
                 if (!level.isClientSide) player.startRiding(this);
                 return InteractionResult.sidedSuccess(level.isClientSide);
@@ -208,11 +198,18 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             if (stack.is(Items.SADDLE)) return stack.interactLivingEntity(player, this, hand);
         }
 
-        return interactionResult;
+        return result;
     }
 
-    public boolean isFood(ItemStack itemStack) {
-        return itemStack.is(BarnyardTags.PIG_BREEDS);
+    @Override
+    protected void usePlayerItem(Player player, InteractionHand hand, ItemStack stack) {
+        if (isFood(stack)) playSound(getEatingSound(stack));
+        super.usePlayerItem(player, hand, stack);
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return stack.is(BarnyardTags.PIG_BREEDS);
     }
 
     @Override
@@ -223,8 +220,8 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> entityDataAccessor) {
-        if (!this.firstTick && CHARGING.equals(entityDataAccessor)) {
-            this.chargingCooldown = this.chargingCooldown == 0 ? 55 : this.chargingCooldown;
+        if (!firstTick && CHARGING.equals(entityDataAccessor)) {
+            chargingCooldown = chargingCooldown == 0 ? 55 : chargingCooldown;
         }
         if (DATA_BOOST_TIME.equals(entityDataAccessor) && level.isClientSide) {
             steering.onSynced();
@@ -261,35 +258,35 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(TUSK, false);
-        this.entityData.define(DATA_SADDLE_ID, false);
-        this.entityData.define(MUDDY, false);
-        this.entityData.define(CHARGING, false);
-        this.entityData.define(DATA_BOOST_TIME, 0);
+        entityData.define(TUSK, false);
+        entityData.define(DATA_SADDLE_ID, false);
+        entityData.define(MUDDY, false);
+        entityData.define(CHARGING, false);
+        entityData.define(DATA_BOOST_TIME, 0);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundTag) {
-        super.addAdditionalSaveData(compoundTag);
-        compoundTag.putBoolean("Tusk", hasTusk());
-        compoundTag.putBoolean("Muddy", isMuddy());
-        steering.addAdditionalSaveData(compoundTag);
+    public void addAdditionalSaveData(CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
+        nbt.putBoolean("Tusk", hasTusk());
+        nbt.putBoolean("Muddy", isMuddy());
+        steering.addAdditionalSaveData(nbt);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-        setHasTusk(compoundTag.getBoolean("Tusk"));
-        setMuddy(compoundTag.getBoolean("Muddy"));
-        steering.readAdditionalSaveData(compoundTag);
+    public void readAdditionalSaveData(CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
+        setHasTusk(nbt.getBoolean("Tusk"));
+        setMuddy(nbt.getBoolean("Muddy"));
+        steering.readAdditionalSaveData(nbt);
     }
 
     public boolean isCharging()  {
-        return this.entityData.get(CHARGING);
+        return entityData.get(CHARGING);
     }
 
     public void setCharging(boolean charging) {
-        this.entityData.set(CHARGING, charging);
+        entityData.set(CHARGING, charging);
     }
 
     public boolean isMuddy() {
@@ -309,19 +306,17 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn (ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag){
-        if (serverLevelAccessor.getRandom().nextFloat() < 0.2f) {
-            setHasTusk(true);
-        }
-        return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData, compoundTag);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType type, @Nullable SpawnGroupData data, @Nullable CompoundTag nbt){
+        if (level.getRandom().nextFloat() < 0.2F) setHasTusk(true);
+        return super.finalizeSpawn(level, difficulty, type, data, nbt);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
+                .add(Attributes.MAX_HEALTH, 20)
                 .add(Attributes.MOVEMENT_SPEED, 0.2f)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.5f)
-                .add(Attributes.ATTACK_DAMAGE, 4.0);
+                .add(Attributes.ATTACK_DAMAGE, 4);
     }
 
     @Override
@@ -379,12 +374,17 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         return BarnyardSounds.PIG_DEATH;
     }
 
+    @Override
+    public SoundEvent getEatingSound(ItemStack stack) {
+        return BarnyardSounds.PIG_EAT;
+    }
+
     protected SoundEvent getStepSound() {
         return isMuddy() ? BarnyardSounds.PIG_STEP_MUDDY : BarnyardSounds.PIG_STEP;
     }
 
     protected void playStepSound(BlockPos blockPos, BlockState blockState){
-        playSound(getStepSound(), 0.15F, 1.0F);
+        playSound(getStepSound(), 0.15F, 1);
     }
 
     protected void dropEquipment() {
@@ -392,7 +392,6 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         if (isSaddled()) {
             spawnAtLocation(Items.SADDLE);
         }
-
     }
 
     public void positionRider(Entity entity){
@@ -413,7 +412,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     public void equipSaddle(@Nullable SoundSource soundSource){
         steering.setSaddle(true);
         if (soundSource != null) {
-            level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1.0f);
+            level.playSound(null, this, BarnyardSounds.PIG_SADDLE_EQUIP, soundSource, 0.5f, 1);
         }
     }
 
@@ -424,40 +423,37 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public boolean boost() {
-        playSound(BarnyardSounds.PIG_DASH);
         return steering.boost(getRandom());
     }
 
     @Override
-    public void travelWithInput(Vec3 vec3){
-        super.travel(vec3);
+    public void travelWithInput(Vec3 input) {
+        if (!hasPose(Pose.STANDING)) input = Vec3.ZERO;
+        super.travel(input);
     }
 
 
    public float getSteeringSpeed() {
-       return (float) this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3f;
+       return (float) getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3f;
    }
 
     @Override
     public void onPlayerJump(int i) {
-        if (!this.isSaddled() || this.chargingCooldown > 0 || !this.isOnGround()) {
-            return;
-        }
-        if (i < 0) {
-            i = 0;
-        }
-        this.playerJumpPendingScale = i >= 90 ? 1.0f : 0.4f + 0.4f * (float) i / 90.0f;
+        if (!isSaddled() || chargingCooldown > 0 || !isOnGround()) return;
+        i = Math.max(i, 0);
+        playerJumpPendingScale = i >= 90 ? 1 : 0.4f + 0.4f * (float) i / 90;
     }
 
     @Override
     public boolean canJump() {
-        return this.isSaddled();
+        return isSaddled();
     }
 
     @Override
     public void handleStartJump(int i) {
-        this.playSound(BarnyardSounds.PIG_DASH, 1.0F, 1.0F);
-        this.setCharging(true);
+        if (getJumpCooldown() > 0) return;
+        playSound(BarnyardSounds.PIG_DASH, 1, 1);
+        setCharging(true);
     }
 
     @Override
@@ -466,7 +462,6 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public int getJumpCooldown() {
-        return this.chargingCooldown;
+        return chargingCooldown;
     }
-
 }

@@ -1,11 +1,12 @@
 package com.ninni.barnyard;
 
 
-import com.ninni.barnyard.init.BarnyardActivities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.reflect.Reflection;
+import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.init.BarnyardActivities;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardItems;
@@ -17,8 +18,6 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ItemSteerable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -43,18 +42,19 @@ public class Barnyard implements ModInitializer {
 				BarnyardSensorTypes.class,
 				BarnyardActivities.class
 		);
+
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
-			Entity vehicle = player.getVehicle();
 			Item item = stack.getItem();
-			if (!player.getCooldowns().isOnCooldown(item) && player.isPassenger() && stack.is(Items.CARROT_ON_A_STICK) && vehicle instanceof ItemSteerable itemSteerable && vehicle.getType() == BarnyardEntityTypes.PIG) {
-				itemSteerable.boost();
+			if (stack.is(Items.CARROT_ON_A_STICK) && !player.getCooldowns().isOnCooldown(item) && player.getVehicle() instanceof BarnyardPig pig) {
+				pig.boost();
+				pig.playSound(pig.getEatingSound(stack));
 				stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
 				player.getCooldowns().addCooldown(item, 20);
 				if (stack.isEmpty()) {
-					ItemStack itemStack2 = new ItemStack(Items.FISHING_ROD);
-					itemStack2.setTag(stack.getTag());
-					return InteractionResultHolder.success(itemStack2);
+					ItemStack fishingRod = new ItemStack(Items.FISHING_ROD);
+					fishingRod.setTag(stack.getTag());
+					return InteractionResultHolder.success(fishingRod);
 				}
 				player.awardStat(Stats.ITEM_USED.get(item));
 				return InteractionResultHolder.success(stack);

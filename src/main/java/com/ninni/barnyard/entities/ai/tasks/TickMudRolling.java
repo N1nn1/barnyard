@@ -2,6 +2,7 @@ package com.ninni.barnyard.entities.ai.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 
 import net.minecraft.server.level.ServerLevel;
@@ -35,6 +36,6 @@ public class TickMudRolling extends Behavior<BarnyardPig> {
         mob.setPose(Pose.STANDING);
         mob.getBrain().eraseMemory(BarnyardMemoryModules.NEAREST_MUD);
         mob.getBrain().eraseMemory(BarnyardMemoryModules.IS_ROLLING_IN_MUD);
-        mob.getBrain().setMemory(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, 6000);
+        mob.getBrain().setMemory(BarnyardMemoryModules.MUD_ROLLING_COOLDOWN_TICKS, BarnyardPigAi.MUD_ROLLING_COOLDOWN.sample(mob.getRandom()));
     }
 }
