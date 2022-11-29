@@ -434,7 +434,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public boolean isSaddleable() {
-        return isAlive() && !isBaby() && hasTusk();
+        return isAlive() && !isBaby();
     }
 
     @Override
@@ -468,19 +468,19 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public void onPlayerJump(int i) {
-        if (!isSaddled() || chargingCooldown > 0 || !isOnGround()) return;
+        if (!isSaddled() || chargingCooldown > 0 || !isOnGround() || !this.hasTusk()) return;
         i = Math.max(i, 0);
         playerJumpPendingScale = i >= 90 ? 1 : 0.4f + 0.4f * (float) i / 90;
     }
 
     @Override
     public boolean canJump() {
-        return isSaddled();
+        return isSaddled() && this.hasTusk();
     }
 
     @Override
     public void handleStartJump(int i) {
-        if (getJumpCooldown() > 0) return;
+        if (getJumpCooldown() > 0 || !this.hasTusk()) return;
         playSound(BarnyardSounds.PIG_DASH, 1, 1);
         setCharging(true);
     }

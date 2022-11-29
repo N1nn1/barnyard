@@ -1,6 +1,7 @@
 package com.ninni.barnyard.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.CooldownRideableJumping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -26,6 +27,10 @@ public class GuiMixin {
         if (player.getVehicle() instanceof CooldownRideableJumping cooldownRideableJumping && cooldownRideableJumping.getJumpCooldown() > 0) {
             ci.cancel();
             ((Gui)(Object)this).blit(poseStack, i, l, 0, 74, 182, 5);
+        }
+
+        if (player.getVehicle() instanceof BarnyardPig pig && !pig.hasTusk()) {
+            ci.cancel();
         }
     }
 
