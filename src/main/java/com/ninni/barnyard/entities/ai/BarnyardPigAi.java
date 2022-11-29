@@ -53,8 +53,8 @@ public class BarnyardPigAi {
     public static final int SNIFFING_DURATION = 120;
     public static final int MUD_ROLL_DURATION = 110;
 
-    public static final UniformInt SNIFFING_COOLDOWN = UniformInt.of(600 * 20, 1800 * 20);
-    public static final UniformInt MUD_ROLLING_COOLDOWN = UniformInt.of(90 * 20, 210 * 20);
+    public static final UniformInt SNIFFING_COOLDOWN = UniformInt.of(900 * 20, 1500 * 20);
+    public static final UniformInt MUD_ROLLING_COOLDOWN = UniformInt.of(60 * 20, 240 * 20);
 
     protected static final float FAST_SPEED = 1.5F;
 
