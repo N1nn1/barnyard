@@ -104,9 +104,9 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SADDLE_ID = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CHARGING = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_BOOST_TIME = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
 
     private final ItemBasedSteering steering;
     private int chargingCooldown = 0;
@@ -153,17 +153,20 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
                 level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RECHARGE, SoundSource.PLAYERS, 1, 1);
             }
         }
+
+        if (getMuddyTicks() > 0) setMuddy(getMuddyTicks() - 1);;
     }
 
     @Override
     public void aiStep() {
-        if (isMuddy() && random.nextInt(5) == 0) {
+        if (getMuddyTicks() > 1800 && random.nextInt(5) == 0) {
             for (int i = 0; i < random.nextInt(1) + 1; ++i) {
                 level.addParticle(BarnyardParticleTypes.MUD, getRandomX(0.8), getY() + 0.5F, getRandomZ(0.8), 0, random.nextFloat() * 5, 0);
             }
         }
-        if (isBaby() && getFeetBlockState().is(Blocks.MUD)) setMuddy(true);
-        if (isMuddy() && isInWaterRainOrBubble()) setMuddy(false);
+        if (isBaby() && getFeetBlockState().is(Blocks.MUD)) setMuddy(20 * 180);
+        if (isMuddy() && isInWaterRainOrBubble()) setMuddy(0);
+
         super.aiStep();
     }
 
@@ -286,7 +289,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         super.defineSynchedData();
         entityData.define(TUSK, false);
         entityData.define(DATA_SADDLE_ID, false);
-        entityData.define(MUDDY, false);
+        entityData.define(MUDDY, 0);
         entityData.define(CHARGING, false);
         entityData.define(DATA_BOOST_TIME, 0);
     }
@@ -295,7 +298,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     public void addAdditionalSaveData(CompoundTag nbt) {
         super.addAdditionalSaveData(nbt);
         nbt.putBoolean("Tusk", hasTusk());
-        nbt.putBoolean("Muddy", isMuddy());
+        nbt.putInt("Muddy", getMuddyTicks());
         steering.addAdditionalSaveData(nbt);
     }
 
@@ -303,7 +306,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
         setHasTusk(nbt.getBoolean("Tusk"));
-        setMuddy(nbt.getBoolean("Muddy"));
+        setMuddy(nbt.getInt("Muddy"));
         steering.readAdditionalSaveData(nbt);
     }
 
@@ -316,10 +319,14 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     }
 
     public boolean isMuddy() {
+        return entityData.get(MUDDY) > 0;
+    }
+
+    public int getMuddyTicks() {
         return entityData.get(MUDDY);
     }
 
-    public void setMuddy(boolean muddy) {
+    public void setMuddy(int muddy) {
         entityData.set(MUDDY, muddy);
     }
 

@@ -27,7 +27,7 @@ public abstract class LayeredCauldronBlockMixin extends AbstractCauldronBlock {
     @Inject(at = @At("TAIL"), method = "entityInside")
     public void B$entityInside(BlockState state, Level level, BlockPos pos, Entity entity, CallbackInfo info) {
         if (!level.isClientSide() && entity instanceof BarnyardPig mob && mob.isMuddy() && isEntityInsideContent(state, pos, mob)) {
-            mob.setMuddy(false);
+            mob.setMuddy(0);
         }
     }
 }

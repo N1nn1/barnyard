@@ -28,7 +28,7 @@ public class TickMudRolling extends Behavior<BarnyardPig> {
     @Override
     protected void tick(ServerLevel level, BarnyardPig mob, long l) {
         mob.getBrain().getMemory(BarnyardMemoryModules.MUD_ROLLING_TICKS).ifPresent((time) -> {
-            if (time == 50) mob.setMuddy(true);
+            if (time == 50) mob.setMuddy(20 * 180);
         });
     }
 
