@@ -130,7 +130,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         boolean flag = playerJumpPendingScale > 0.0F && !isCharging() && onGround;
         if (flag) {
             f += f * 1.15f * Mth.sin((float) steering.boostTime / (float) steering.boostTimeTotal * (float) Math.PI);
-            setDeltaMovement(getDeltaMovement().add(getLookAngle().multiply(1, 0, 1).normalize().scale((double) (6.44444F) * getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) getBlockSpeedFactor()).add(0, (double) (1.4285f * f) * 1.5F, 0)));
+            setDeltaMovement(getDeltaMovement().add(getLookAngle().multiply(1, 0, 1).normalize().scale((double) (6.44444F * playerJumpPendingScale) * getAttributeValue(Attributes.MOVEMENT_SPEED) * (double) getBlockSpeedFactor()).add(0, (double) (1.4285f * f) * 1.5F, 0)));
             chargingCooldown = 55;
             setCharging(true);
             hasImpulse = false;
@@ -177,7 +177,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
             double e = (1 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
             mob.push(vec33.x() * e, vec33.y() * d, vec33.z() * e);
             DamageSource source = passenger instanceof Player player ? DamageSource.playerAttack(player) : DamageSource.mobAttack(passenger);
-            if (mob.hurt(source, (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.5F)) {
+            if (mob.hurt(source, (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2F)) {
                 level.playSound(null, getX(), getY(), getZ(), BarnyardSounds.PIG_DASH_RAM, SoundSource.PLAYERS, 1, 1);
             }
         }
@@ -468,7 +468,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
 
     @Override
     public void onPlayerJump(int i) {
-        if (!isSaddled() || chargingCooldown > 0 || !isOnGround() || !this.hasTusk()) return;
+        if (!isSaddled() || chargingCooldown > 0  || !this.hasTusk()) return;
         i = Math.max(i, 0);
         playerJumpPendingScale = i >= 90 ? 1 : 0.4f + 0.4f * (float) i / 90;
     }

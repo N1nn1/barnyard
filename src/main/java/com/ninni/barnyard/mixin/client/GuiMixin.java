@@ -24,7 +24,7 @@ public class GuiMixin {
     private void B$renderJumpMeter(PoseStack poseStack, int i, CallbackInfo ci) {
         LocalPlayer player = this.minecraft.player;
         int l = this.screenHeight - 32 + 3;
-        if (player.getVehicle() instanceof CooldownRideableJumping cooldownRideableJumping && cooldownRideableJumping.getJumpCooldown() > 0) {
+        if (player.getVehicle() instanceof CooldownRideableJumping vehicle && vehicle.getJumpCooldown() > 0) {
             ci.cancel();
             ((Gui)(Object)this).blit(poseStack, i, l, 0, 74, 182, 5);
         }
