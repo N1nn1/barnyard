@@ -3,6 +3,7 @@ package com.ninni.barnyard;
 import com.ninni.barnyard.client.model.BarnyardModelLayers;
 import com.ninni.barnyard.client.model.BarnyardPigModel;
 import com.ninni.barnyard.client.particle.MudParticle;
+import com.ninni.barnyard.client.particle.SnoringParticle;
 import com.ninni.barnyard.client.render.BarnyardPigRenderer;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
@@ -27,6 +28,7 @@ public class BarnyardClient implements ClientModInitializer {
         );
 
         ParticleFactoryRegistry.getInstance().register(BarnyardParticleTypes.MUD, MudParticle.Factory::new);
+        ParticleFactoryRegistry.getInstance().register(BarnyardParticleTypes.SNORING, SnoringParticle.Factory::new);
 
         EntityRendererRegistry.register(BarnyardEntityTypes.PIG, BarnyardPigRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG, () -> BarnyardPigModel.getLayerDefinition(CubeDeformation.NONE));

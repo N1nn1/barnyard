@@ -9,4 +9,5 @@ import static com.ninni.barnyard.Barnyard.MOD_ID;
 
 public class BarnyardParticleTypes {
     public static final SimpleParticleType MUD = Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(MOD_ID, "mud"), FabricParticleTypes.simple());
+    public static final SimpleParticleType SNORING = Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(MOD_ID, "snoring"), FabricParticleTypes.simple());
 }
