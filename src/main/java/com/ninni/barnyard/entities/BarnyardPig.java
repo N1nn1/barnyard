@@ -113,6 +113,7 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     protected float playerJumpPendingScale;
     public final AnimationState sniffingAnimationState = new AnimationState();
     public final AnimationState rollingInMudAnimationState = new AnimationState();
+    public final AnimationState sleepingAnimationState = new AnimationState();
 
     public BarnyardPig(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -256,6 +257,11 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
                 rollingInMudAnimationState.start(tickCount);
             } else {
                 rollingInMudAnimationState.stop();
+            }
+            if (getPose() == Pose.SLEEPING) {
+                sleepingAnimationState.start(tickCount);
+            } else {
+                sleepingAnimationState.stop();
             }
         }
         super.onSyncedDataUpdated(entityDataAccessor);

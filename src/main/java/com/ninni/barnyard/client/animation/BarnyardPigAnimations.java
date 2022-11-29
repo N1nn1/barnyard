@@ -233,7 +233,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.041677f, KeyframeAnimations.posVec(0f, -3f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(BODY,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -287,7 +288,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(-15f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(LEFT_EAR,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -315,7 +317,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(RIGHT_EAR,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -343,7 +346,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.208343f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.458343f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(NOSE,
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(1.125f, KeyframeAnimations.posVec(0f, 0f, 0f),
@@ -375,7 +379,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.25f, KeyframeAnimations.posVec(0f, 0f, 0.75f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(4.375f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(TAIL,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(2.375f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -391,7 +396,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, -45f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(LEFT_ARM,
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
@@ -417,7 +423,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.083433f, KeyframeAnimations.posVec(0f, -3f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(LEFT_ARM,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0.7083434f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -463,7 +470,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, 0f, -45f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(LEFT_LEG,
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
@@ -489,7 +497,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.083433f, KeyframeAnimations.posVec(0f, -3f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(LEFT_LEG,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0.7083434f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -535,7 +544,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, 0f, -45f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(RIGHT_LEG,
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
@@ -561,7 +571,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.25f, KeyframeAnimations.posVec(0f, -3f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(RIGHT_LEG,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0.7083434f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -607,7 +618,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, 0f, -45f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(RIGHT_ARM,
                         new AnimationChannel(AnimationChannel.Targets.POSITION,
                                 new Keyframe(0.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
@@ -633,7 +645,8 @@ public class BarnyardPigAnimations {
                                 new Keyframe(5.25f, KeyframeAnimations.posVec(0f, -3f, 0f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.5f, KeyframeAnimations.posVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM)))
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
                 .addAnimation(RIGHT_ARM,
                         new AnimationChannel(AnimationChannel.Targets.ROTATION,
                                 new Keyframe(0.7083434f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
@@ -679,6 +692,111 @@ public class BarnyardPigAnimations {
                                 new Keyframe(4.834333f, KeyframeAnimations.degreeVec(0f, 0f, -45f),
                                         AnimationChannel.Interpolations.CATMULLROM),
                                 new Keyframe(5.25f, KeyframeAnimations.degreeVec(0f, 0f, 0f),
-                                        AnimationChannel.Interpolations.CATMULLROM))).build();
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                ).build();
+        
+        public static final AnimationDefinition SLEEPING = AnimationDefinition.Builder.withLength(4f).looping()
+                .addAnimation(BODY,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(0f, -3f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.2083433f, KeyframeAnimations.posVec(0f, -2.5f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.5f, KeyframeAnimations.posVec(0f, -2.5f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(4f, KeyframeAnimations.posVec(0f, -3f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(LEFT_EAR,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0.08343333f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.4583433f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.625f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.9167667f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(3.5834335f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(RIGHT_EAR,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.375f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.5416767f, KeyframeAnimations.degreeVec(-25f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.8343333f, KeyframeAnimations.degreeVec(-20f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(3.5f, KeyframeAnimations.degreeVec(10f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(NOSE,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(0.875f, KeyframeAnimations.posVec(0f, 0f, 0.7000000000000001f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1.3433333f, KeyframeAnimations.posVec(0f, 0f, 0.7000000000000001f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(3f, KeyframeAnimations.posVec(0f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(TAIL,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(-45f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(1f, KeyframeAnimations.degreeVec(-45.992972804363944f, 10.545290589499928f, -10.728583121609063f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(2f, KeyframeAnimations.degreeVec(-45f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(3f, KeyframeAnimations.degreeVec(-45.992972804363944f, -10.545290589499928f, 10.728583121609063f),
+                                        AnimationChannel.Interpolations.CATMULLROM),
+                                new Keyframe(4f, KeyframeAnimations.degreeVec(-45f, 0f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(RIGHT_ARM,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(-2f, -2f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(RIGHT_ARM,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(-22.5f, 0f, 90f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(RIGHT_LEG,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(-2f, -2f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(RIGHT_LEG,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(45f, 0f, 90f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(LEFT_LEG,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(2f, -2f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(LEFT_LEG,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(45f, 0f, -90f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(LEFT_ARM,
+                        new AnimationChannel(AnimationChannel.Targets.POSITION,
+                                new Keyframe(0f, KeyframeAnimations.posVec(2f, -2f, 0f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .addAnimation(LEFT_ARM,
+                        new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                                new Keyframe(0f, KeyframeAnimations.degreeVec(-22.5f, 0f, -90f),
+                                        AnimationChannel.Interpolations.CATMULLROM))
+                )
+                .build();
 
 }
