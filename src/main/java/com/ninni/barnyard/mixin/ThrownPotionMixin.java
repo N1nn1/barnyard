@@ -21,7 +21,7 @@ public abstract class ThrownPotionMixin extends ThrowableItemProjectile {
     }
 
     @Inject(at = @At("TAIL"), method = "applyWater")
-    private void applyWater(CallbackInfo info) {
+    private void B$applyWater(CallbackInfo info) {
         AABB aABB = getBoundingBox().inflate(4, 2, 4);
         level.getEntitiesOfClass(BarnyardPig.class, aABB).forEach((mob) -> {
             mob.setMuddy(false);
