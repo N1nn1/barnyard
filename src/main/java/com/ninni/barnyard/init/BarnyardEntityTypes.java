@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
@@ -22,6 +23,7 @@ public class BarnyardEntityTypes {
             .entityFactory(BarnyardPig::new)
             .defaultAttributes(BarnyardPig::createAttributes)
             .spawnRestriction(Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules)
+            .spawnGroup(MobCategory.CREATURE)
             .dimensions(EntityDimensions.scalable(0.9F, 0.9F)), null);
 
     @SuppressWarnings("unchecked")
