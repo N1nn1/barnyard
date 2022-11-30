@@ -1,5 +1,9 @@
 package com.ninni.barnyard.entities;
 
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
@@ -9,6 +13,7 @@ import com.ninni.barnyard.init.BarnyardParticleTypes;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
+
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -58,9 +63,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, ItemSteerable, CooldownRideableJumping {
 
@@ -103,7 +105,9 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             BarnyardMemoryModules.IS_ROLLING_IN_MUD,
             BarnyardMemoryModules.MUD_COOLDOWN,
             BarnyardMemoryModules.MUD_ROLLING_TICKS,
-            BarnyardMemoryModules.NEAREST_MUD
+            BarnyardMemoryModules.NEAREST_MUD,
+
+            BarnyardMemoryModules.IS_SLEEPING
     );
 
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
@@ -180,7 +184,6 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
         }
         if (isBaby() && getFeetBlockState().is(Blocks.MUD)) setMuddy(20 * 180);
         if (isMuddy() && isInWaterRainOrBubble()) setMuddy(0);
-
         super.aiStep();
     }
 
@@ -275,7 +278,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             } else {
                 rollingInMudAnimationState.stop();
             }
-            if (getPose() == Pose.SLEEPING) {
+            if (getPose() == Pose.ROARING) {
                 sleepingAnimationState.start(tickCount);
             } else {
                 sleepingAnimationState.stop();

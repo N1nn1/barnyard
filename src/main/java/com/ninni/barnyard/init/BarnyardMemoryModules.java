@@ -11,6 +11,8 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 public class BarnyardMemoryModules {
+
+    public static final MemoryModuleType<Unit> IS_SLEEPING = register("is_sleeping", Codec.unit(Unit.INSTANCE));
     
     public static final MemoryModuleType<Integer> PIG_SNIFFING_TICKS = register("pig_sniffing_ticks", Codec.INT);
 
