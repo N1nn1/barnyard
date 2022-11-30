@@ -80,8 +80,7 @@ public abstract class AbstractHappyAnimal extends Animal {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (petCooldown == 0) {
-
+        if (petCooldown == 0 && player.getItemInHand(hand).isEmpty()) {
             petCooldown = 40;
             this.level.addParticle(getEmotionParticle(), this.getX(), this.getY() + 1.25F, this.getZ(), 0, 0, 0);
             this.playAmbientSound();
