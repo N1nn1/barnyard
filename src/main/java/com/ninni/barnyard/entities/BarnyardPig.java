@@ -1,7 +1,5 @@
 package com.ninni.barnyard.entities;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
@@ -11,7 +9,6 @@ import com.ninni.barnyard.init.BarnyardParticleTypes;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
-
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +19,9 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -56,7 +55,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, CooldownRideableJumping {
 
@@ -155,6 +158,16 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         }
 
         if (getMuddyTicks() > 0) setMuddy(getMuddyTicks() - 1);;
+    }
+
+    public static boolean checkBarnyardPigSpawnRules(EntityType<? extends LivingEntity> entityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+        List<BarnyardPig> pigs = serverLevelAccessor.getEntitiesOfClass(BarnyardPig.class, new AABB(blockPos).inflate(64));
+        boolean flag = true;
+        for (BarnyardPig pig : pigs) {
+            if (pig.blockPosition().closerThan(blockPos, 10)) continue;
+            flag = pigs.size() == 0;
+        }
+        return serverLevelAccessor.getLevel().isDay() && Animal.isBrightEnoughToSpawn(serverLevelAccessor, blockPos) && flag && serverLevelAccessor.getBlockState(blockPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON);
     }
 
     @Override

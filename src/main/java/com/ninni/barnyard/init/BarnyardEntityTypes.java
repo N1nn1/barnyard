@@ -22,8 +22,8 @@ public class BarnyardEntityTypes {
     public static final EntityType<BarnyardPig> PIG = register("pig", FabricEntityTypeBuilder.createMob()
             .entityFactory(BarnyardPig::new)
             .defaultAttributes(BarnyardPig::createAttributes)
-            .spawnRestriction(Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules)
-            .spawnGroup(MobCategory.CREATURE)
+            .spawnRestriction(Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarnyardPig::checkBarnyardPigSpawnRules)
+            .spawnGroup(MobCategory.AMBIENT)
             .dimensions(EntityDimensions.scalable(0.9F, 0.9F)), null);
 
     @SuppressWarnings("unchecked")
