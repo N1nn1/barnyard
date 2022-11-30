@@ -33,7 +33,7 @@ public class StartMudRolling extends Behavior<BarnyardPig> {
     protected void start(ServerLevel level, BarnyardPig mob, long l) {
         getNearestCluster(mob).ifPresent(pos -> {
             BehaviorUtils.setWalkAndLookTargetMemories(mob, pos, 1, 0);
-            int distance = mob.blockPosition().distManhattan(pos);
+            int distance = pos.distManhattan(mob.blockPosition());
             if (distance <= 1) {
                 Brain<BarnyardPig> brain = mob.getBrain();
 

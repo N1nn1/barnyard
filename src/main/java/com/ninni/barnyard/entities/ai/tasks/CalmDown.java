@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 
 public class CalmDown extends Behavior<LivingEntity> {
 
-    private int minDistance;
+    private final int minDistance;
 
     public CalmDown(int minDistance) {
         super(ImmutableMap.of(MemoryModuleType.HURT_BY_ENTITY, MemoryStatus.VALUE_PRESENT));

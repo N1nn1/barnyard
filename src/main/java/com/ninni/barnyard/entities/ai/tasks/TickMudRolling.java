@@ -35,6 +35,7 @@ public class TickMudRolling extends Behavior<BarnyardPig> {
     @Override
     protected void stop(ServerLevel level, BarnyardPig mob, long l) {
         mob.setPose(Pose.STANDING);
+        mob.increaseHappyLevel();
         mob.getBrain().eraseMemory(BarnyardMemoryModules.NEAREST_MUD);
         mob.getBrain().eraseMemory(BarnyardMemoryModules.IS_ROLLING_IN_MUD);
         mob.getBrain().setMemoryWithExpiry(BarnyardMemoryModules.MUD_COOLDOWN, Unit.INSTANCE, BarnyardPigAi.MUD_ROLLING_COOLDOWN.sample(mob.getRandom()));

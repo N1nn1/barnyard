@@ -32,6 +32,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ItemBasedSteering;
 import net.minecraft.world.entity.ItemSteerable;
@@ -61,7 +62,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, CooldownRideableJumping {
+public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, ItemSteerable, CooldownRideableJumping {
 
     protected static final ImmutableList<SensorType<? extends Sensor<? super BarnyardPig>>> SENSOR_TYPES = ImmutableList.of(
             SensorType.NEAREST_LIVING_ENTITIES,
@@ -414,6 +415,21 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     }
 
     @Override
+    public int getMaxHeadYRot() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return 1;
+    }
+
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions entityDimensions) {
+        return super.getStandingEyeHeight(pose, entityDimensions) - 0.3F;
+    }
+
+    @Override
     @Nullable
     protected SoundEvent getAmbientSound() {
         return getPose() == Pose.STANDING ? BarnyardSounds.PIG_AMBIENT : null;
@@ -487,7 +503,6 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
         super.travel(input);
     }
 
-
    public float getSteeringSpeed() {
        return (float) getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.3f;
    }
@@ -519,4 +534,15 @@ public class BarnyardPig extends Animal implements Saddleable, ItemSteerable, Co
     public int getJumpCooldown() {
         return chargingCooldown;
     }
+
+    @Override
+    public int getMinHappyLevel() {
+        return -5;
+    }
+
+    @Override
+    public int getMaxHappyLevel() {
+        return 5;
+    }
+
 }
