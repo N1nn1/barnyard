@@ -2,7 +2,12 @@ package com.ninni.barnyard;
 
 
 import com.ninni.barnyard.init.*;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +46,8 @@ public class Barnyard implements ModInitializer {
 				BarnyardActivities.class
 		);
 
+		this.replaceEntity(EntityType.PIG, BarnyardEntityTypes.PIG, 10, 4, 4);
+
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
 			Item item = stack.getItem();
@@ -59,5 +66,13 @@ public class Barnyard implements ModInitializer {
 			}
 			return InteractionResultHolder.pass(stack);
 		});
+	}
+
+	private void replaceEntity(EntityType<?> from, EntityType<?> to, int weight, int minGroupSize, int maxGroupSize) {
+		BiomeModifications.addSpawn(context -> BiomeSelectors.spawnsOneOf(from).test(context), to.getCategory(), to, weight, minGroupSize, maxGroupSize);
+		BiomeModifications.create(new ResourceLocation(MOD_ID, "_replace_" + Registry.ENTITY_TYPE.getKey(from).getPath())).add(ModificationPhase.REPLACEMENTS,
+			context -> BiomeSelectors.spawnsOneOf(from).test(context),
+			(selector, modifier) -> modifier.getSpawnSettings().removeSpawnsOfEntityType(from)
+		);
 	}
 }
