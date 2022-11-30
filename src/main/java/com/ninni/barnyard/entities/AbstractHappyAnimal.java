@@ -1,13 +1,14 @@
 package com.ninni.barnyard.entities;
 
+import com.ninni.barnyard.init.BarnyardParticleTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -17,13 +18,13 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
 public abstract class AbstractHappyAnimal extends Animal {
     private static final EntityDataAccessor<Integer> HAPPINESS_LEVEL = SynchedEntityData.defineId(AbstractHappyAnimal.class, EntityDataSerializers.INT);
     private static final UUID SAD_MOVEMENT_MODIFIER_UUID = UUID.fromString("ad287975-57a5-45fe-b0b4-ecbfe068b766");
+    private int petCooldown = 40;
 
     protected AbstractHappyAnimal(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
@@ -78,28 +79,42 @@ public abstract class AbstractHappyAnimal extends Animal {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        Vec3 angle = this.getLookAngle().yRot(-this.yBodyRot * ((float) Math.PI) / 180).scale(0.5D).add(this.getX(), this.getEyeY(), this.getZ());
-        boolean happy = this.isHappy();
-        double randomX = happy ? this.getRandomX(1.0D) : angle.x;
-        double randomY = happy ? this.getRandomY() + 0.5D : angle.y;
-        double randomZ = happy ? this.getRandomZ(1.0D) : angle.z;
-        float threshold = happy ? 0.05F : 0.55F;
-        SimpleParticleType particle = happy ? ParticleTypes.HEART : ParticleTypes.SPLASH;
-        if (this.random.nextFloat() < threshold) {
-            int count = Math.max(Math.abs(this.getHappinessLevel()), 1);
-            for (int i = 0; i < this.random.nextInt(count); ++i) {
-                double d = this.random.nextGaussian() * 0.02;
-                double e = this.random.nextGaussian() * 0.02;
-                double f = this.random.nextGaussian() * 0.02;
-                this.level.addParticle(particle, randomX, randomY, randomZ, d, e, f);
-            }
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (petCooldown == 0) {
+
+            petCooldown = 40;
+            this.level.addParticle(getEmotionParticle(), this.getX(), this.getY() + 1.25F, this.getZ(), 0, 0, 0);
+            this.playAmbientSound();
+            return InteractionResult.SUCCESS;
         }
+        return super.mobInteract(player, hand);
     }
 
-    private boolean isHappy() {
-        return this.getHappinessLevel() >= 0;
+    public SimpleParticleType getEmotionParticle() {
+        int happiness = this.getHappinessLevel();
+
+        if (happiness == getMaxHappyLevel()) return BarnyardParticleTypes.EMOTION_JOYOUS;
+        if (happiness > 0) return BarnyardParticleTypes.EMOTION_HAPPY;
+        if (happiness != getMinHappyLevel()) return BarnyardParticleTypes.EMOTION_NEUTRAL;
+        else return BarnyardParticleTypes.EMOTION_SAD;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        if (this.isBaby()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.5f;
+        else {
+            int happiness = this.getHappinessLevel();
+            if (happiness == getMaxHappyLevel()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.25f;
+            if (happiness > 0) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f;
+            if (happiness != getMinHappyLevel()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 0.85f;
+        }
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 0.75f;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (petCooldown > 0) petCooldown--;
     }
 
     private void removeSadMovementModifier() {
