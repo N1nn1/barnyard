@@ -6,9 +6,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
-import com.ninni.barnyard.entities.ai.tasks.AnimalWakeUp;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
-import com.ninni.barnyard.entities.ai.tasks.FindPlaceToRestAndSleep;
+import com.ninni.barnyard.entities.ai.tasks.QuitResting;
+import com.ninni.barnyard.entities.ai.tasks.Rest;
 import com.ninni.barnyard.entities.ai.tasks.StartMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
 import com.ninni.barnyard.entities.ai.tasks.TickMudRolling;
@@ -87,8 +87,8 @@ public class BarnyardPigAi {
     private static void initCoreActivity(Brain<BarnyardPig> brain) {
         brain.addActivity(Activity.CORE, 0, ImmutableList.of(
                 new Swim(0.8f),
-                new AnimalWakeUp(),
                 new CalmDown(48),
+                new QuitResting<>(),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
                 new StopBeingAngryIfTargetDead<>(),
@@ -106,17 +106,17 @@ public class BarnyardPigAi {
                 Pair.of(3, new FollowTemptation(livingEntity -> 1.25f)),
                 Pair.of(4, new BabyFollowAdult<>(UniformInt.of(5, 16), 1.25f)),
                 Pair.of(5, new RunIf<>(BarnyardPigAi::canPerformIdleActivies, new RunOne<>(ImmutableList.of(
-                    Pair.of(new FindPlaceToRestAndSleep(), 0),
                     Pair.of(new StartSniffing(), 0),
                     Pair.of(new StartMudRolling(), 0)))
                 )),
                 Pair.of(6, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6), UniformInt.of(30, 60))),
-                Pair.of(7, new RunOne<>(ImmutableList.of(
+                Pair.of(7, new RunIf<>(livingEntity -> !livingEntity.isResting(), new RunOne<>(ImmutableList.of(
+                    Pair.of(new Rest<>(), 1),
                     Pair.of(new RandomStroll(1), 2),
                     Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
                     Pair.of(new DoNothing(30, 60), 1)
-                )))),
-                ImmutableSet.of(Pair.of(BarnyardMemoryModules.IS_SLEEPING, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.IS_ROLLING_IN_MUD, MemoryStatus.VALUE_ABSENT)));
+                ))))),
+                ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.IS_ROLLING_IN_MUD, MemoryStatus.VALUE_ABSENT)));
     }
 
     private static void initFightActivity(Brain<BarnyardPig> brain) {
@@ -129,7 +129,7 @@ public class BarnyardPigAi {
 
     protected static boolean canPerformIdleActivies(BarnyardPig pig) {
         Brain<BarnyardPig> brain = pig.getBrain();
-        if (pig.isSleeping()) return false;
+        if (pig.isResting()) return false;
         if (pig.isBaby()) return false;
         if (pig.isVehicle()) return false;
         if (pig.isInLove()) return false;

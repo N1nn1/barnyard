@@ -1,19 +1,15 @@
 package com.ninni.barnyard.entities;
 
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardParticleTypes;
+import com.ninni.barnyard.init.BarnyardPose;
 import com.ninni.barnyard.init.BarnyardSensorTypes;
 import com.ninni.barnyard.init.BarnyardSounds;
 import com.ninni.barnyard.init.BarnyardTags;
-
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -50,6 +46,7 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
@@ -63,6 +60,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, ItemSteerable, CooldownRideableJumping {
 
@@ -105,9 +105,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             BarnyardMemoryModules.IS_ROLLING_IN_MUD,
             BarnyardMemoryModules.MUD_COOLDOWN,
             BarnyardMemoryModules.MUD_ROLLING_TICKS,
-            BarnyardMemoryModules.NEAREST_MUD,
-
-            BarnyardMemoryModules.IS_SLEEPING
+            BarnyardMemoryModules.NEAREST_MUD
     );
 
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
@@ -117,6 +115,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
     private static final EntityDataAccessor<Integer> MUDDY = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.INT);
 
     private final ItemBasedSteering steering;
+    private int snoringTicks = 0;
     private int chargingCooldown = 0;
     protected float playerJumpPendingScale;
     public final AnimationState sniffingAnimationState = new AnimationState();
@@ -125,13 +124,14 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
 
     public BarnyardPig(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
+        lookControl = new BarnyardPigLookControl();
         steering = new ItemBasedSteering(entityData, DATA_BOOST_TIME, DATA_SADDLE_ID);
     }
 
     @Override
     public void travel(Vec3 input) {
         if (!isAlive()) return;
-        if (!hasPose(Pose.STANDING) && isOnGround()) {
+        if (this.hasPose(BarnyardPose.RESTING.get()) && isOnGround()) {
             setDeltaMovement(getDeltaMovement().multiply(0, 1, 0));
             input = input.multiply(0, 1, 0);
         }
@@ -146,6 +146,10 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             playerJumpPendingScale = 0.0F;
         }
         travel(this, steering, input);
+    }
+
+    public boolean inUnmovablePose() {
+        return !(this.hasPose(Pose.STANDING) || this.hasPose(BarnyardPose.RESTING.get()));
     }
 
     @Override
@@ -177,6 +181,13 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
 
     @Override
     public void aiStep() {
+        if (this.isResting()) {
+            if (snoringTicks == 0) {
+                this.snoringTicks = 30;
+                this.level.addParticle(BarnyardParticleTypes.SNORING, this.getX(), this.getY() + 0.5F, this.getZ(), 0f, 0f, 0f);
+            }
+            if (snoringTicks > 0) this.snoringTicks--;
+        }
         if (getMuddyTicks() > 1800 && random.nextInt(5) == 0) {
             for (int i = 0; i < random.nextInt(1) + 1; ++i) {
                 level.addParticle(BarnyardParticleTypes.MUD, getRandomX(0.8), getY() + 0.5F, getRandomZ(0.8), 0, random.nextFloat() * 5, 0);
@@ -185,6 +196,10 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
         if (isBaby() && getFeetBlockState().is(Blocks.MUD)) setMuddy(20 * 180);
         if (isMuddy() && isInWaterRainOrBubble()) setMuddy(0);
         super.aiStep();
+    }
+
+    public boolean isResting() {
+        return this.hasPose(BarnyardPose.RESTING.get());
     }
 
     private boolean isValidTarget(LivingEntity mob) {
@@ -229,9 +244,9 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
                 spawnAtLocation(Items.SADDLE);
                 playSound(BarnyardSounds.PIG_SADDLE_UNEQUIP, 1, 1);
                 return InteractionResult.sidedSuccess(level.isClientSide);
-            } else if (isFood(stack)) {
+            } else if (isFood(stack) && !this.isResting()) {
                 return result;
-            } else if (!isVehicle() && !player.isSecondaryUseActive()) {
+            } else if (!isVehicle() && !player.isSecondaryUseActive() && !isResting()) {
                 if (!level.isClientSide) player.startRiding(this);
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
@@ -278,7 +293,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             } else {
                 rollingInMudAnimationState.stop();
             }
-            if (getPose() == Pose.ROARING) {
+            if (getPose() == BarnyardPose.RESTING.get()) {
                 sleepingAnimationState.start(tickCount);
             } else {
                 sleepingAnimationState.stop();
@@ -316,12 +331,16 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
         super.addAdditionalSaveData(nbt);
         nbt.putBoolean("Tusk", hasTusk());
         nbt.putInt("Muddy", getMuddyTicks());
+        nbt.putBoolean("IsResting", this.getPose() == BarnyardPose.RESTING.get());
         steering.addAdditionalSaveData(nbt);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
+        if (nbt.getBoolean("IsSitting")) {
+            this.setPose(BarnyardPose.RESTING.get());
+        }
         setHasTusk(nbt.getBoolean("Tusk"));
         setMuddy(nbt.getInt("Muddy"));
         steering.readAdditionalSaveData(nbt);
@@ -502,7 +521,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
 
     @Override
     public void travelWithInput(Vec3 input) {
-        if (!hasPose(Pose.STANDING)) input = Vec3.ZERO;
+        if (this.inUnmovablePose()) input = Vec3.ZERO;
         super.travel(input);
     }
 
@@ -546,6 +565,20 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
     @Override
     public int getMaxHappyLevel() {
         return 5;
+    }
+
+    public class BarnyardPigLookControl extends LookControl {
+
+        public BarnyardPigLookControl() {
+            super(BarnyardPig.this);
+        }
+
+        @Override
+        public void tick() {
+            if (!BarnyardPig.this.isResting()) {
+                super.tick();
+            }
+        }
     }
 
 }

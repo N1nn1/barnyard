@@ -29,7 +29,9 @@ public class BarnyardPigRenderer extends MobRenderer<BarnyardPig, BarnyardPigMod
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(BarnyardPig entity) {
-        if (entity.isSleeping()) return SLEEPING_PIG_LOCATION;
+        if (entity.isResting()) {
+            return SLEEPING_PIG_LOCATION;
+        }
         return entity.hasTusk() ? TUSKED_PIG_LOCATION : PIG_LOCATION;
     }
 }
