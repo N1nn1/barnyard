@@ -80,7 +80,7 @@ public abstract class AbstractHappyAnimal extends Animal {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (petCooldown == 0 && player.getItemInHand(hand).isEmpty()) {
+        if (petCooldown == 0 && player.getItemInHand(hand).isEmpty() && player.isShiftKeyDown() && !this.isSleeping()) {
             petCooldown = 40;
             this.level.addParticle(getEmotionParticle(), this.getX(), this.getY() + 1.25F, this.getZ(), 0, 0, 0);
             this.playAmbientSound();
@@ -118,9 +118,7 @@ public abstract class AbstractHappyAnimal extends Animal {
 
     private void removeSadMovementModifier() {
         AttributeInstance attributeInstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (attributeInstance == null) {
-            return;
-        }
+        if (attributeInstance == null) return;
         if (attributeInstance.getModifier(SAD_MOVEMENT_MODIFIER_UUID) != null) {
             attributeInstance.removeModifier(SAD_MOVEMENT_MODIFIER_UUID);
         }
@@ -129,7 +127,9 @@ public abstract class AbstractHappyAnimal extends Animal {
     private void addSadMovementModifier() {
         AttributeInstance attributeInstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
         float speedModifier = this.getHappinessLevel() * 0.01F;
-        AttributeModifier modifier = new AttributeModifier(SAD_MOVEMENT_MODIFIER_UUID, "Sad movement modifier", speedModifier, AttributeModifier.Operation.ADDITION);
+        AttributeModifier modifier;
+        if (this.getHappinessLevel() < 0) modifier = new AttributeModifier(SAD_MOVEMENT_MODIFIER_UUID, "Sad movement modifier", speedModifier, AttributeModifier.Operation.ADDITION);
+        else modifier = new AttributeModifier(SAD_MOVEMENT_MODIFIER_UUID, "Sad movement modifier", 0, AttributeModifier.Operation.ADDITION);
         if (attributeInstance == null || attributeInstance.hasModifier(modifier)) {
             return;
         }

@@ -13,8 +13,8 @@ public class EmotionParticle extends TextureSheetParticle {
     protected EmotionParticle(ClientLevel clientLevel, double d, double e, double f, SpriteSet spriteSet) {
         super(clientLevel, d, e, f);
         this.spriteSet = spriteSet;
-        this.setLifetime(60);
-        this.gravity = -0.005F;
+        this.setLifetime(40);
+        this.gravity = -0.025F;
         this.quadSize = 0.4F;
         this.setSpriteFromAge(spriteSet);
     }
@@ -22,6 +22,13 @@ public class EmotionParticle extends TextureSheetParticle {
     @Override
     public void tick() {
         super.tick();
+        if (age < 40) {
+            if (alpha > 0.1F) {
+                alpha -= 0.025F;
+            } else {
+                this.remove();
+            }
+        }
         this.setSpriteFromAge(spriteSet);
     }
 
