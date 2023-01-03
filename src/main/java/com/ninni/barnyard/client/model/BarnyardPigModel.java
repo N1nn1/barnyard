@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ninni.barnyard.client.animation.BarnyardPigAnimations;
 import com.ninni.barnyard.entities.BarnyardPig;
+import com.ninni.barnyard.init.BarnyardPose;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HierarchicalModel;
@@ -176,7 +177,7 @@ public class BarnyardPigModel extends HierarchicalModel<BarnyardPig> {
         float degree = 1f;
         float tilt = Math.min(limbDistance, 1.0f);
 
-        if (entity.getPose() != Pose.SNIFFING && entity.getPose() != Pose.DIGGING) {
+        if (entity.getPose() != Pose.SNIFFING && entity.getPose() != Pose.DIGGING && entity.getPose() != BarnyardPose.RESTING.get()) {
             this.rightLeg.xRot = Mth.cos(limbAngle * 0.7f * speed) * 1.4f * degree * limbDistance;
             this.leftLeg.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;
             this.rightArm.xRot = Mth.cos(limbAngle * 0.7f * speed + pi) * 1.4f * degree * limbDistance;

@@ -32,11 +32,11 @@ public class MuddyLayer extends RenderLayer<BarnyardPig, BarnyardPigModel> {
         if (pig.getMuddyTicks() > 1800) opacity = 1;
         else opacity = pig.getMuddyTicks() * 0.00055555556F;
 
-        (this.getParentModel()).copyPropertiesTo(this.model);
-        (this.model).prepareMobModel(pig, f, g, h);
-        (this.model).setupAnim(pig, f, g, j, k, l);
+        this.getParentModel().copyPropertiesTo(this.model);
+        this.model.prepareMobModel(pig, f, g, h);
+        this.model.setupAnim(pig, f, g, j, k, l);
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityTranslucent(this.textureLocation));
-        (this.model).renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, opacity);
+        this.model.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, opacity);
     }
 }
 

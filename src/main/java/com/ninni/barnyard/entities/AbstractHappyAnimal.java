@@ -1,6 +1,7 @@
 package com.ninni.barnyard.entities;
 
 import com.ninni.barnyard.init.BarnyardParticleTypes;
+import com.ninni.barnyard.init.BarnyardPose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.nbt.CompoundTag;
@@ -80,10 +81,9 @@ public abstract class AbstractHappyAnimal extends Animal {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (petCooldown == 0 && player.getItemInHand(hand).isEmpty() && player.isShiftKeyDown() && !this.isSleeping()) {
+        if (petCooldown == 0 && player.getItemInHand(hand).isEmpty() && player.isShiftKeyDown() && this.getPose() != BarnyardPose.RESTING.get()) {
             petCooldown = 40;
             this.level.addParticle(getEmotionParticle(), this.getX(), this.getY() + 1.25F, this.getZ(), 0, 0, 0);
-            this.playAmbientSound();
             return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
@@ -96,18 +96,6 @@ public abstract class AbstractHappyAnimal extends Animal {
         if (happiness > 0) return BarnyardParticleTypes.EMOTION_HAPPY;
         if (happiness != getMinHappyLevel()) return BarnyardParticleTypes.EMOTION_NEUTRAL;
         else return BarnyardParticleTypes.EMOTION_SAD;
-    }
-
-    @Override
-    public float getVoicePitch() {
-        if (this.isBaby()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.5f;
-        else {
-            int happiness = this.getHappinessLevel();
-            if (happiness == getMaxHappyLevel()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.25f;
-            if (happiness > 0) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 1.0f;
-            if (happiness != getMinHappyLevel()) return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 0.85f;
-        }
-        return (this.random.nextFloat() - this.random.nextFloat()) * 0.2f + 0.75f;
     }
 
     @Override
