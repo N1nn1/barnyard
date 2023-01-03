@@ -9,8 +9,9 @@ public interface BarnyardModelLayers {
    ModelLayerLocation PIG = create("pig", "main");
    ModelLayerLocation PIG_SADDLE = create("pig", "saddle");
 
+   ModelLayerLocation RABBIT = create("rabbit", "main");
+
     private static ModelLayerLocation create(String id, String layer) {
         return new ModelLayerLocation(new ResourceLocation(Barnyard.MOD_ID, id), layer);
     }
-
 }

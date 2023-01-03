@@ -3,13 +3,14 @@
 	"mod.barnyard.contact.discord": "Discord",
 	"itemGroup.barnyard.barnyard": "Barnyard",
 
-
 	"block.barnyard.thatch_block": "Thatch Block",
 	"block.barnyard.thatch": "Thatch",
 
 	"entity.barnyard.pig": "Pig",
+	"entity.barnyard.rabbit": "Rabbit",
 
 	"item.barnyard.barnyard_pig_spawn_egg": "Pig Spawn Egg",
+	"item.barnyard.barnyard_rabbit_spawn_egg": "Rabbit Spawn Egg",
 	"item.barnyard.truffle": "Truffle",
 	"item.barnyard.truffle_stew": "Truffle Stew",
 

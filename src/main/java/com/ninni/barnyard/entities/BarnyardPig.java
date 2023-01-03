@@ -169,7 +169,7 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
         if (getMuddyTicks() > 0) setMuddy(getMuddyTicks() - 1);;
     }
 
-    public static boolean checkBarnyardPigSpawnRules(EntityType<? extends LivingEntity> entityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+    public static boolean checkSpawnRules(EntityType<? extends LivingEntity> entityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
         List<BarnyardPig> pigs = serverLevelAccessor.getEntitiesOfClass(BarnyardPig.class, new AABB(blockPos).inflate(64));
         boolean flag = true;
         for (BarnyardPig pig : pigs) {

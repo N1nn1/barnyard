@@ -46,8 +46,6 @@ public class Barnyard implements ModInitializer {
 				BarnyardActivities.class
 		);
 
-		this.replaceEntity(EntityType.PIG, BarnyardEntityTypes.PIG, 10, 4, 4);
-
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getItemInHand(hand);
 			Item item = stack.getItem();
@@ -66,6 +64,9 @@ public class Barnyard implements ModInitializer {
 			}
 			return InteractionResultHolder.pass(stack);
 		});
+
+		replaceEntity(EntityType.PIG, BarnyardEntityTypes.PIG, 10, 4, 4);
+		replaceEntity(EntityType.RABBIT, BarnyardEntityTypes.RABBIT, 6, 2, 3);
 	}
 
 	private void replaceEntity(EntityType<?> from, EntityType<?> to, int weight, int minGroupSize, int maxGroupSize) {

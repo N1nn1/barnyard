@@ -2,13 +2,16 @@ package com.ninni.barnyard;
 
 import com.ninni.barnyard.client.model.BarnyardModelLayers;
 import com.ninni.barnyard.client.model.BarnyardPigModel;
+import com.ninni.barnyard.client.model.BarnyardRabbitModel;
 import com.ninni.barnyard.client.particle.EmotionParticle;
 import com.ninni.barnyard.client.particle.MudParticle;
 import com.ninni.barnyard.client.particle.SnoringParticle;
 import com.ninni.barnyard.client.render.BarnyardPigRenderer;
+import com.ninni.barnyard.client.render.BarnyardRabbitRenderer;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardParticleTypes;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,5 +41,8 @@ public class BarnyardClient implements ClientModInitializer {
         EntityRendererRegistry.register(BarnyardEntityTypes.PIG, BarnyardPigRenderer::new);
         EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG, () -> BarnyardPigModel.getLayerDefinition(CubeDeformation.NONE));
         EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.PIG_SADDLE, () -> BarnyardPigModel.getLayerDefinition(new CubeDeformation(0.5F)));
+
+        EntityRendererRegistry.register(BarnyardEntityTypes.RABBIT, BarnyardRabbitRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(BarnyardModelLayers.RABBIT, () -> BarnyardRabbitModel.getLayerDefinition());
     }
 }
