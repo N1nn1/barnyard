@@ -1,5 +1,8 @@
 package com.ninni.barnyard.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ninni.barnyard.entities.BarnyardRabbit;
 
 import net.fabricmc.api.EnvType;
@@ -134,10 +137,6 @@ public class BarnyardRabbitModel extends HierarchicalModel<BarnyardRabbit> {
         return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
-    @Override
-    public ModelPart root() {
-        return root;
-    }
 
     @Override
     public void setupAnim(BarnyardRabbit mob, float limbAngle, float limbDistance, float age, float headYaw, float headPitch) {
@@ -163,5 +162,34 @@ public class BarnyardRabbitModel extends HierarchicalModel<BarnyardRabbit> {
         leftArm.xRot = Mth.cos(limbAngle * 1.4f + pi) * 2.8f * limbDistance;
 
         tail.yRot = Mth.cos(limbAngle * 0.7f + pi/2) * 1.4f * limbDistance;
+    }
+
+
+    @Override
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, float f, float g, float h, float k) {
+        if (this.young) {
+            poseStack.pushPose();
+            poseStack.scale(0.75F, 0.75F, 0.75F);
+            poseStack.translate(0.0,0.6F, 0.0);
+            this.head.render(poseStack, vertexConsumer, i, j, f, g, h, k);
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+            poseStack.translate(0.0,1.5F, 0.0);
+            this.getScalableParts().forEach(modelPart -> modelPart.render(poseStack, vertexConsumer, i, j, f, g, h, k));
+            poseStack.popPose();
+        } else {
+            this.root().render(poseStack, vertexConsumer, i, j, f, g, h, k);
+        }
+    }
+
+    @Override
+    public ModelPart root() {
+        return root;
+    }
+
+    public Iterable<ModelPart> getScalableParts() {
+        return ImmutableList.of(this.body, this.leftArm, this.leftLeg, this.rightArm, this.rightLeg);
     }
 }

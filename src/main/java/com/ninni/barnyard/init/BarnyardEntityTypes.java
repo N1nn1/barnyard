@@ -28,7 +28,7 @@ public class BarnyardEntityTypes {
             .defaultAttributes(BarnyardRabbit::createAttributes)
             .spawnRestriction(Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarnyardRabbit::checkSpawnRules)
             .spawnGroup(MobCategory.AMBIENT)
-            .dimensions(EntityDimensions.scalable(0.4F, 0.5F)));
+            .dimensions(EntityDimensions.scalable(0.6F, 0.8F)));
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType<T> entityType) {
         return Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(Barnyard.MOD_ID, id), entityType);
