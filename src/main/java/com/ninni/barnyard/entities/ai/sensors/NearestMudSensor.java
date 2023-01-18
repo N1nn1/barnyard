@@ -18,6 +18,22 @@ import net.minecraft.world.level.block.Blocks;
 
 public class NearestMudSensor extends Sensor<BarnyardPig> {
 
+    @Override
+    protected void doTick(ServerLevel level, BarnyardPig mob) {
+        Brain<BarnyardPig> brain = mob.getBrain();
+        MemoryModuleType<BlockPos> memory = BarnyardMemoryModules.NEAREST_MUD;
+
+        if (brain.hasMemoryValue(memory)) {
+            Optional<BlockPos> optional = brain.getMemory(memory);
+            if (optional.isPresent()) {
+                BlockPos pos = optional.get();
+                if (pos.distManhattan(mob.blockPosition()) > 16) findNewPosition(level, mob);
+            }
+        } else {
+            findNewPosition(level, mob);
+        }
+    }
+
     protected void findNewPosition(ServerLevel level, BarnyardPig mob) {
         Brain<BarnyardPig> brain = mob.getBrain();
         MemoryModuleType<BlockPos> memory = BarnyardMemoryModules.NEAREST_MUD;
@@ -34,28 +50,12 @@ public class NearestMudSensor extends Sensor<BarnyardPig> {
                 }
             }
         }
-        
+
         if (!list.isEmpty()) {
             BlockPos pos = list.get(mob.getRandom().nextInt(list.size()));
             brain.setMemory(memory, pos);
         } else {
             brain.eraseMemory(memory);
-        }
-    }
-
-    @Override
-    protected void doTick(ServerLevel level, BarnyardPig mob) {
-        Brain<BarnyardPig> brain = mob.getBrain();
-        MemoryModuleType<BlockPos> memory = BarnyardMemoryModules.NEAREST_MUD;
-        
-        if (brain.hasMemoryValue(memory)) {
-            Optional<BlockPos> optional = brain.getMemory(memory);
-            if (optional.isPresent()) {
-                BlockPos pos = optional.get();
-                if (pos.distManhattan(mob.blockPosition()) > 16) findNewPosition(level, mob);
-            }
-        } else {
-            findNewPosition(level, mob);
         }
     }
 
