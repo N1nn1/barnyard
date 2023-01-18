@@ -7,7 +7,9 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
+import com.ninni.barnyard.entities.ai.tasks.GoToRestSpot;
 import com.ninni.barnyard.entities.ai.tasks.QuitResting;
+import com.ninni.barnyard.entities.ai.tasks.FindRestSpot;
 import com.ninni.barnyard.entities.ai.tasks.Rest;
 import com.ninni.barnyard.entities.ai.tasks.StartMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.CountDownCooldownTicks;
 import net.minecraft.world.entity.ai.behavior.DoNothing;
 import net.minecraft.world.entity.ai.behavior.FollowTemptation;
+import net.minecraft.world.entity.ai.behavior.GoToTargetLocation;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 import net.minecraft.world.entity.ai.behavior.MeleeAttack;
 import net.minecraft.world.entity.ai.behavior.MoveToTargetSink;
@@ -63,6 +66,7 @@ public class BarnyardPigAi {
     public static Brain<?> makeBrain(Brain<BarnyardPig> brain) {
         initCoreActivity(brain);
         initIdleActivity(brain);
+        initRestActivity(brain);
         initFightActivity(brain);
         initSniffingActivity(brain);
         initMudRollingActivity(brain);
@@ -111,12 +115,12 @@ public class BarnyardPigAi {
                 )),
                 Pair.of(6, new RunSometimes<LivingEntity>(new SetEntityLookTarget(EntityType.PLAYER, 6), UniformInt.of(30, 60))),
                 Pair.of(7, new RunIf<>(livingEntity -> !livingEntity.isResting(), new RunOne<>(ImmutableList.of(
-                    Pair.of(new Rest<>(), 1),
+                    Pair.of(new FindRestSpot<>(), 1),
                     Pair.of(new RandomStroll(1), 2),
                     Pair.of(new SetWalkTargetFromLookTarget(1, 3), 2),
                     Pair.of(new DoNothing(30, 60), 1)
                 ))))),
-                ImmutableSet.of(Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.IS_ROLLING_IN_MUD, MemoryStatus.VALUE_ABSENT)));
+                ImmutableSet.of(Pair.of(BarnyardMemoryModules.REST_SPOT, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.IS_SNIFFING, MemoryStatus.VALUE_ABSENT), Pair.of(BarnyardMemoryModules.IS_ROLLING_IN_MUD, MemoryStatus.VALUE_ABSENT)));
     }
 
     private static void initFightActivity(Brain<BarnyardPig> brain) {
@@ -125,6 +129,15 @@ public class BarnyardPigAi {
             new MeleeAttack(25),
             new StopAttackingIfTargetInvalid<>()
         ), MemoryModuleType.ATTACK_TARGET);
+    }
+
+    private static void initRestActivity(Brain<BarnyardPig> brain) {
+        brain.addActivityWithConditions(Activity.REST,
+                ImmutableList.of(
+                        Pair.of(0, new Rest())
+                ),
+                ImmutableSet.of(Pair.of(BarnyardMemoryModules.REST_SPOT, MemoryStatus.VALUE_PRESENT))
+        );
     }
 
     protected static boolean canPerformIdleActivies(BarnyardPig pig) {
@@ -146,7 +159,7 @@ public class BarnyardPigAi {
     }
 
     public static void updateActivity(BarnyardPig pig) {
-        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.SNIFF, BarnyardActivities.MUD_ROLLING, Activity.FIGHT, Activity.IDLE));
+        pig.getBrain().setActiveActivityToFirstValid(ImmutableList.of(Activity.REST, Activity.SNIFF, BarnyardActivities.MUD_ROLLING, Activity.FIGHT, Activity.IDLE));
     }
 
     public static Ingredient getTemptations() {

@@ -105,7 +105,8 @@ public class BarnyardPig extends AbstractHappyAnimal implements Saddleable, Item
             BarnyardMemoryModules.IS_ROLLING_IN_MUD,
             BarnyardMemoryModules.MUD_COOLDOWN,
             BarnyardMemoryModules.MUD_ROLLING_TICKS,
-            BarnyardMemoryModules.NEAREST_MUD
+            BarnyardMemoryModules.NEAREST_MUD,
+            BarnyardMemoryModules.REST_SPOT
     );
 
     private static final EntityDataAccessor<Boolean> TUSK = SynchedEntityData.defineId(BarnyardPig.class, EntityDataSerializers.BOOLEAN);
