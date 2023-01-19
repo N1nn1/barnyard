@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 
@@ -34,6 +35,9 @@ public class GoToRestSpot extends Behavior<BarnyardPig> {
     }
 
     private boolean isValid(BarnyardPig livingEntity, BlockPos blockPos) {
+        if (!livingEntity.level.noCollision(livingEntity, new AABB(blockPos))) {
+            return false;
+        }
         return !this.isCloseToRestSpot(livingEntity, blockPos) && livingEntity.level.canSeeSky(blockPos);
     }
 

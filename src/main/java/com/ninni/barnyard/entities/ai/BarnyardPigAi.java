@@ -1,15 +1,12 @@
 package com.ninni.barnyard.entities.ai;
 
-import java.util.Optional;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import com.ninni.barnyard.entities.BarnyardPig;
 import com.ninni.barnyard.entities.ai.tasks.CalmDown;
-import com.ninni.barnyard.entities.ai.tasks.GoToRestSpot;
-import com.ninni.barnyard.entities.ai.tasks.QuitResting;
 import com.ninni.barnyard.entities.ai.tasks.FindRestSpot;
+import com.ninni.barnyard.entities.ai.tasks.QuitResting;
 import com.ninni.barnyard.entities.ai.tasks.Rest;
 import com.ninni.barnyard.entities.ai.tasks.StartMudRolling;
 import com.ninni.barnyard.entities.ai.tasks.StartSniffing;
@@ -19,7 +16,6 @@ import com.ninni.barnyard.init.BarnyardActivities;
 import com.ninni.barnyard.init.BarnyardEntityTypes;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardTags;
-
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +26,6 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.behavior.CountDownCooldownTicks;
 import net.minecraft.world.entity.ai.behavior.DoNothing;
 import net.minecraft.world.entity.ai.behavior.FollowTemptation;
-import net.minecraft.world.entity.ai.behavior.GoToTargetLocation;
 import net.minecraft.world.entity.ai.behavior.LookAtTargetSink;
 import net.minecraft.world.entity.ai.behavior.MeleeAttack;
 import net.minecraft.world.entity.ai.behavior.MoveToTargetSink;
@@ -52,6 +47,8 @@ import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.Optional;
 
 public class BarnyardPigAi {
 

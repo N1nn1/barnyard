@@ -23,18 +23,17 @@ public class QuitResting<T extends LivingEntity> extends Behavior<T> {
         Optional<BlockPos> memory = livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT);
         if (serverLevel.isDay() && livingEntity.hasPose(BarnyardPose.RESTING.get())) {
             return true;
-        }
-        if (memory.isPresent()) {
+        } else if (livingEntity.getBrain().hasMemoryValue(MemoryModuleType.HURT_BY_ENTITY)) {
+            return true;
+        } else if (memory.isPresent()) {
             boolean flag = !serverLevel.getBlockState(memory.get()).canOcclude() && serverLevel.canSeeSky(memory.get());
             if (livingEntity.isOnGround()) {
                 return false;
             } else if (flag) {
                 return true;
-            } else if (serverLevel.getBlockState(memory.get()).canOcclude() && serverLevel.canSeeSky(memory.get())) {
-                return true;
-            }
+            } else return serverLevel.getBlockState(memory.get()).canOcclude() && serverLevel.canSeeSky(memory.get());
         }
-        return livingEntity.getBrain().hasMemoryValue(MemoryModuleType.HURT_BY_ENTITY);
+        return false;
     }
 
     @Override

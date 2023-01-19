@@ -2,19 +2,15 @@ package com.ninni.barnyard.entities.ai.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.ninni.barnyard.entities.BarnyardPig;
-import com.ninni.barnyard.entities.ai.BarnyardPigAi;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardPose;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.List;
 import java.util.Optional;
