@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.phys.AABB;
@@ -27,9 +28,6 @@ public class Rest extends Behavior<BarnyardPig> {
 
     @Override
     protected boolean canStillUse(ServerLevel serverLevel, BarnyardPig livingEntity, long l) {
-        if (livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT).isPresent() && serverLevel.getEntitiesOfClass(Entity.class, new AABB(livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT).get().above())).size() >= 1) {
-            return false;
-        }
         Optional<BlockPos> memory = livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT);
         return memory.map(blockPos -> !this.isCloseEnough(livingEntity, blockPos)).orElse(true) && serverLevel.isNight();
     }

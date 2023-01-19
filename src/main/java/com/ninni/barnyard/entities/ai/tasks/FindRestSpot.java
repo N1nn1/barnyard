@@ -5,12 +5,14 @@ import com.google.common.collect.Lists;
 import com.ninni.barnyard.init.BarnyardBlocks;
 import com.ninni.barnyard.init.BarnyardMemoryModules;
 import com.ninni.barnyard.init.BarnyardPose;
+import net.fabricmc.fabric.api.item.v1.CustomDamageHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +26,13 @@ public class FindRestSpot<T extends LivingEntity> extends Behavior<T> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, T livingEntity) {
-        if (livingEntity.getBrain().hasMemoryValue(MemoryModuleType.HURT_BY_ENTITY)) {
+        if (livingEntity.getBrain().hasMemoryValue(MemoryModuleType.HURT_BY_ENTITY) || livingEntity.isVehicle() || livingEntity.isInWater() || serverLevel.isDay()) {
             return false;
         }
         Optional<BlockPos> restPosition = this.findRestPosition(serverLevel, livingEntity);
         if (restPosition.isPresent()) {
             this.blockPos = restPosition.get();
-            return serverLevel.isNight() && livingEntity.isOnGround() && !livingEntity.isInWater() && !livingEntity.hasPose(BarnyardPose.RESTING.get()) && !livingEntity.isVehicle();
+            return livingEntity.isOnGround() && !livingEntity.hasPose(BarnyardPose.RESTING.get()) && !livingEntity.isVehicle();
         }
         return this.blockPos != null;
     }
@@ -50,7 +52,8 @@ public class FindRestSpot<T extends LivingEntity> extends Behavior<T> {
             for (int z = -range; z <= range; z++) {
                 for (int y = -range; y <= range; y++) {
                     BlockPos blockPos = new BlockPos(mob.getX() + x, mob.getY() + y, mob.getZ() + z);
-                    if (world.getBlockState(blockPos).is(BarnyardBlocks.THATCH_BLOCK) || world.getBlockState(blockPos).is(BarnyardBlocks.THATCH)) {
+                    BlockState blockState = world.getBlockState(blockPos);
+                    if ((blockState.is(BarnyardBlocks.THATCH_BLOCK) || blockState.is(BarnyardBlocks.THATCH)) && world.getBlockState(blockPos.above()).isAir()) {
                         preferrables.add(blockPos);
                     }
                     BlockPos offset = new BlockPos(mob.getX() + x, mob.getBoundingBox().maxY, mob.getZ() + z);
