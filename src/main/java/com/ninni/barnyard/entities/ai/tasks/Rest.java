@@ -20,13 +20,13 @@ public class Rest extends Behavior<BarnyardPig> {
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, BarnyardPig livingEntity) {
-        return !livingEntity.hasPose(BarnyardPose.RESTING.get());
+        return !livingEntity.hasPose(BarnyardPose.RESTING.get()) && serverLevel.isNight();
     }
 
     @Override
     protected boolean canStillUse(ServerLevel serverLevel, BarnyardPig livingEntity, long l) {
         Optional<BlockPos> memory = livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT);
-        return memory.map(blockPos -> !this.isCloseEnough(livingEntity, blockPos)).orElse(true);
+        return memory.map(blockPos -> !this.isCloseEnough(livingEntity, blockPos)).orElse(true) && serverLevel.isNight();
     }
 
     private boolean isCloseEnough(LivingEntity livingEntity, BlockPos blockPos) {
@@ -40,9 +40,8 @@ public class Rest extends Behavior<BarnyardPig> {
 
     @Override
     protected void stop(ServerLevel serverLevel, BarnyardPig livingEntity, long l) {
-        Optional<BlockPos> memory = livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT);
-        if (memory.isPresent() && this.isCloseEnough(livingEntity, memory.get())) {
+        livingEntity.getBrain().getMemory(BarnyardMemoryModules.REST_SPOT).filter(blockPos -> this.isCloseEnough(livingEntity, blockPos)).ifPresent(blockPos -> {
             livingEntity.setPose(BarnyardPose.RESTING.get());
-        }
+        });
     }
 }
