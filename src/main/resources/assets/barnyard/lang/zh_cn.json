@@ -1,0 +1,34 @@
+{
+	"mod.barnyard.name": "Barnyard",
+	"mod.barnyard.contact.discord": "Discord",
+	"itemGroup.barnyard.barnyard": "Barnyard",
+
+	"block.barnyard.thatch_block": "Thatch Block",
+	"block.barnyard.thatch": "Thatch",
+
+	"entity.barnyard.pig": "Pig",
+	"entity.barnyard.rabbit": "Rabbit",
+
+	"item.barnyard.barnyard_pig_spawn_egg": "Pig Spawn Egg",
+	"item.barnyard.barnyard_rabbit_spawn_egg": "Rabbit Spawn Egg",
+	"item.barnyard.truffle": "Truffle",
+	"item.barnyard.truffle_stew": "Truffle Stew",
+
+	"tooltip.food_item": "When Consumed:",
+	"tooltip.truffle_stew.effect_duration": "Haste (4:00)",
+	"tooltip.truffle_stew.effect.mine": "+20% Mining Speed",
+	"tooltip.truffle_stew.effect.attack": "+10% Attack Speed",
+	
+	"subtitles.barnyard.pig.ambient": "Pig oinks",
+	"subtitles.barnyard.pig.hurt": "Pig hurts",
+	"subtitles.barnyard.pig.death": "Pig dies",
+	"subtitles.barnyard.pig.step": "Pig steps",
+	"subtitles.barnyard.pig.eat": "Pig munches",
+	"subtitles.barnyard.pig.dash": "Pig charges",
+	"subtitles.barnyard.pig.dash.recharge": "Pig readies",
+	"subtitles.barnyard.pig.dash.ram": "Pig hits",
+	"subtitles.barnyard.pig.sniff": "Pig sniffs",
+	"subtitles.barnyard.pig.mud_roll": "Pig rolls in mud",
+	"subtitles.barnyard.pig.saddle_equip": "Saddle equips",
+	"subtitles.barnyard.pig.saddle_unequip": "Saddle comes off"
+}
