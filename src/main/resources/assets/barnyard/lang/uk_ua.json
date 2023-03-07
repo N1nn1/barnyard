@@ -3,7 +3,7 @@
 	"mod.barnyard.contact.discord": "Discord",
 	"itemGroup.barnyard.barnyard": "Barnyard",
 
-	"block.barnyard.thatch_block": "Солом'яний блок",
+	"block.barnyard.thatch_block": "Копиця соломи",
 	"block.barnyard.thatch": "Солома",
 
 	"entity.barnyard.pig": "Свиня",
@@ -12,7 +12,7 @@
 	"item.barnyard.barnyard_pig_spawn_egg": "Яйце виклику свині",
 	"item.barnyard.barnyard_rabbit_spawn_egg": "Яйце виклику кролика",
 	"item.barnyard.truffle": "Трюфель",
-	"item.barnyard.truffle_stew": "Трюфельне стебло",
+	"item.barnyard.truffle_stew": "Тушкований труфель",
 
 	"tooltip.food_item": "При споживанні:",
 	"tooltip.truffle_stew.effect_duration": "Квапливість (4:00)",
@@ -22,9 +22,9 @@
 	"subtitles.barnyard.pig.ambient": "Свиня хрюкає",
 	"subtitles.barnyard.pig.hurt": "Свиню поранено",
 	"subtitles.barnyard.pig.death": "Свиня гине",
-	"subtitles.barnyard.pig.step": "Свиня крокує",
+	"subtitles.barnyard.pig.step": "Свиня ходить",
 	"subtitles.barnyard.pig.eat": "Свиня жує",
-	"subtitles.barnyard.pig.dash": "Pig charges",
+	"subtitles.barnyard.pig.dash": "Свиня накопичує енергію",
 	"subtitles.barnyard.pig.dash.recharge": "Свиня готується",
 	"subtitles.barnyard.pig.dash.ram": "Свиня вдаряє",
 	"subtitles.barnyard.pig.sniff": "Свиня нюхає",
