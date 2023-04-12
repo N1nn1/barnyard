@@ -1,0 +1,34 @@
+{
+	"mod.barnyard.name": "Barnyard",
+	"mod.barnyard.contact.discord": "Discord",
+	"itemGroup.barnyard.barnyard": "Barnyard",
+
+	"block.barnyard.thatch_block": "干草垛",
+	"block.barnyard.thatch": "干草堆",
+
+	"entity.barnyard.pig": "猪",
+	"entity.barnyard.rabbit": "兔子",
+
+	"item.barnyard.barnyard_pig_spawn_egg": "猪刷怪蛋",
+	"item.barnyard.barnyard_rabbit_spawn_egg": "兔子刷怪蛋",
+	"item.barnyard.truffle": "松露",
+	"item.barnyard.truffle_stew": "菌种杂烩",
+
+	"tooltip.food_item": "When Consumed:",
+	"tooltip.truffle_stew.effect_duration": "急迫 (4:00)",
+	"tooltip.truffle_stew.effect.mine": "+20% 挖掘速度",
+	"tooltip.truffle_stew.effect.attack": "+10% 攻击速度",
+	
+	"subtitles.barnyard.pig.ambient": "猪：哼哼叫",
+	"subtitles.barnyard.pig.hurt": "猪：受伤",
+	"subtitles.barnyard.pig.death": "猪：死亡",
+	"subtitles.barnyard.pig.step": "猪：脚步声",
+	"subtitles.barnyard.pig.eat": "猪：咀嚼",
+	"subtitles.barnyard.pig.dash": "猪：冲击",
+	"subtitles.barnyard.pig.dash.recharge": "猪：蓄力",
+	"subtitles.barnyard.pig.dash.ram": "猪：攻击",
+	"subtitles.barnyard.pig.sniff": "猪：嗅探",
+	"subtitles.barnyard.pig.mud_roll": "猪：在泥浆里打滚",
+	"subtitles.barnyard.pig.saddle_equip": "马鞍装备",
+	"subtitles.barnyard.pig.saddle_unequip": "马鞍取下"
+}
